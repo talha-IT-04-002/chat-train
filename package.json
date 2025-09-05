@@ -1,0 +1,28 @@
+{
+  "name": "chat-train",
+  "version": "1.0.0",
+  "description": "AI Training Platform - Full Stack Application",
+  "scripts": {
+    "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "start": "cd backend && npm start",
+    "test": "cd backend && npm test",
+    "lint": "cd frontend && npm run lint"
+  },
+  "keywords": [
+    "ai",
+    "training",
+    "chatbot",
+    "mern",
+    "react",
+    "nodejs"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

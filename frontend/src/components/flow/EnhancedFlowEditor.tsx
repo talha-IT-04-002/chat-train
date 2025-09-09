@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useCallback, useRef, useEffect, useImperativeHandle, forwardRef } from 'react';
 import ReactFlow, {
   addEdge,
   useNodesState,
@@ -23,7 +23,8 @@ import {
   AlertTriangle, 
   CheckCircle, 
   Download,
-  Trash2
+  Trash2,
+  X
 } from 'lucide-react';
 
 interface ReactFlowNodeData extends FlowNodeData {
@@ -38,9 +39,19 @@ interface EnhancedFlowEditorProps {
   initialName?: string;
   showTopPanel?: boolean;
   autoSave?: boolean;
+  onNameChange?: (name: string) => void;
 }
 
-const EnhancedFlowEditor: React.FC<EnhancedFlowEditorProps & { project: any }> = ({
+export interface EnhancedFlowEditorHandle {
+  setName: (name: string) => void;
+  getName: () => string;
+  openSaveModal: () => void;
+  validate: () => void;
+  exportFlow: () => void;
+  save: () => void;
+}
+
+const EnhancedFlowEditor = forwardRef<EnhancedFlowEditorHandle, EnhancedFlowEditorProps & { project: any }>(({
   initialNodes = [],
   initialEdges = [],
   onSave,
@@ -48,8 +59,9 @@ const EnhancedFlowEditor: React.FC<EnhancedFlowEditorProps & { project: any }> =
   initialName,
   showTopPanel = true,
   autoSave = false,
-  project
-}) => {
+  project,
+  onNameChange
+}, ref) => {
   const [nodes, setNodes, onNodesChange] = useNodesState<ReactFlowNodeData>(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [selectedNode, setSelectedNode] = useState<Node<ReactFlowNodeData> | null>(null);
@@ -62,7 +74,9 @@ const EnhancedFlowEditor: React.FC<EnhancedFlowEditorProps & { project: any }> =
   const [isValidating, setIsValidating] = useState(false);
   const [selectedEdge, setSelectedEdge] = useState<Edge | null>(null);
   const [showEdgeProperties, setShowEdgeProperties] = useState(false);
+  const [showAdvancedEdgeOptions, setShowAdvancedEdgeOptions] = useState(false);
   const [showMobilePalette, setShowMobilePalette] = useState(false);
+  const [showDesktopPalette, setShowDesktopPalette] = useState(true);
   const [showNewMessageIndicator, setShowNewMessageIndicator] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -123,6 +137,10 @@ const EnhancedFlowEditor: React.FC<EnhancedFlowEditorProps & { project: any }> =
       setFlowName(initialName);
     }
   }, [initialName]);
+
+  useEffect(() => {
+    if (onNameChange) onNameChange(flowName);
+  }, [flowName, onNameChange]);
 
   const convertToCustomNodes = useCallback((reactFlowNodes: Node<ReactFlowNodeData>[]) => {
     return reactFlowNodes.map(n => ({
@@ -337,6 +355,15 @@ const EnhancedFlowEditor: React.FC<EnhancedFlowEditorProps & { project: any }> =
     URL.revokeObjectURL(url);
   }, [flowName, nodes, edges, convertToCustomNodes, convertToCustomEdges]);
 
+  useImperativeHandle(ref, () => ({
+    setName: (name: string) => setFlowName(name),
+    getName: () => flowName,
+    openSaveModal: () => setShowSaveModal(true),
+    validate: () => { validateFlow(); },
+    exportFlow: () => { exportFlow(); },
+    save: () => { saveFlow(); }
+  }), [flowName, validateFlow, exportFlow, saveFlow]);
+
   useEffect(() => {
     if (!onSave || !autoSave) return;
     const handle = setTimeout(() => {
@@ -406,8 +433,16 @@ const EnhancedFlowEditor: React.FC<EnhancedFlowEditorProps & { project: any }> =
     return hints[t] || [];
   }, []);
 
+  const handleWrapperDoubleClick = (e: React.MouseEvent) => {
+    const target = e.target as HTMLElement | null
+    if (target && target.closest('.react-flow__panel')) return
+    if (typeof window !== 'undefined' && window.innerWidth >= 640) {
+      setShowDesktopPalette(true)
+    }
+  }
+
   return (
-    <div className="h-full w-full" ref={reactFlowWrapper}>
+    <div className="h-full w-full" ref={reactFlowWrapper} onDoubleClick={handleWrapperDoubleClick}>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -493,25 +528,38 @@ const EnhancedFlowEditor: React.FC<EnhancedFlowEditorProps & { project: any }> =
           </div>
         </Panel>
 
-        <Panel position="top-right" className="bg-white rounded-lg shadow-lg p-4 m-4 hidden sm:block">
-          <h3 className="font-semibold text-gray-700 mb-3">Add Nodes</h3>
-          <div className="grid grid-cols-2 gap-2">
-            {nodeTypeDefinitions.map((nodeType) => (
-              <div
-                key={nodeType.type}
-                draggable
-                onDragStart={(event) => onDragStart(event, nodeType.type)}
-                className={`${nodeType.color} text-white p-2 rounded cursor-move hover:opacity-80 transition-opacity text-center text-xs`}
-                title={nodeType.description}
-              >
-                <span className="inline-flex items-center justify-center gap-1">
-                  {nodeType.icon}
-                  <span>{nodeType.label}</span>
-                </span>
-              </div>
-            ))}
-          </div>
-        </Panel>
+        {showDesktopPalette && (
+          <Panel position="top-right" className="bg-white rounded-lg shadow-lg p-4 m-4 hidden sm:block">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-semibold text-gray-700">Add Nodes</h3>
+              <Button size="sm" variant="accent" onClick={() => setShowDesktopPalette(false)} aria-label="Close">
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              {nodeTypeDefinitions.map((nodeType) => (
+                <div
+                  key={nodeType.type}
+                  draggable
+                  onDragStart={(event) => onDragStart(event, nodeType.type)}
+                  className={`${nodeType.color} text-white p-2 rounded cursor-move hover:opacity-80 transition-opacity text-center text-xs`}
+                  title={nodeType.description}
+                >
+                  <span className="inline-flex items-center justify-center gap-1">
+                    {nodeType.icon}
+                    <span>{nodeType.label}</span>
+                  </span>
+                </div>
+              ))}
+            </div>
+          </Panel>
+        )}
+
+        {!showDesktopPalette && (
+          <Panel position="top-right" className="bg-white rounded-lg shadow p-2 m-4 hidden sm:block">
+            <Button size="sm" onClick={() => setShowDesktopPalette(true)} className="bg-blue-600 hover:bg-blue-700 text-white">Show Nodes</Button>
+          </Panel>
+        )}
 
         {showMobilePalette && (
           <Panel position="bottom-center" className="bg-white rounded-lg shadow-lg p-4 m-4 block sm:hidden">
@@ -842,63 +890,73 @@ const EnhancedFlowEditor: React.FC<EnhancedFlowEditorProps & { project: any }> =
             )}
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Conditions (JSON)
-              </label>
-              <textarea
-                rows={3}
-                value={JSON.stringify(((selectedEdge as any).data?.conditions || []))}
-                onChange={(e) => {
-                  try {
-                    const parsed = JSON.parse(e.target.value || '[]')
-                    updateEdgeData(selectedEdge.id, { conditions: parsed })
-                  } catch {}
-                }}
-                className="w-full p-2 border border-gray-300 rounded-md"
-                placeholder='[ { "type": "permission", "value": "canTransition" } ]'
-              />
-            </div>
+              <div className="flex items-center justify-between">
+                <label className="block text-sm font-medium text-gray-700">Advanced</label>
+                <Button size="sm" variant="accent" onClick={() => setShowAdvancedEdgeOptions(v => !v)}>
+                  {showAdvancedEdgeOptions ? 'Hide' : 'Show'} JSON
+                </Button>
+              </div>
+              {showAdvancedEdgeOptions && (
+                <div className="mt-3 space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Conditions (JSON)</label>
+                    <textarea
+                      rows={3}
+                      value={JSON.stringify(((selectedEdge as any).data?.conditions || []))}
+                      onChange={(e) => {
+                        try {
+                          const parsed = JSON.parse(e.target.value || '[]')
+                          updateEdgeData(selectedEdge.id, { conditions: parsed })
+                        } catch {}
+                      }}
+                      className="w-full p-2 border border-gray-300 rounded-md"
+                      placeholder='[ { "type": "permission", "value": "canTransition" } ]'
+                    />
+                  </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Validators (JSON)</label>
-                <textarea
-                  rows={3}
-                  value={JSON.stringify(((selectedEdge as any).data?.validators || []))}
-                  onChange={(e) => { try { updateEdgeData(selectedEdge.id, { validators: JSON.parse(e.target.value || '[]') }) } catch {} }}
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Post Functions (JSON)</label>
-                <textarea
-                  rows={3}
-                  value={JSON.stringify(((selectedEdge as any).data?.postFunctions || []))}
-                  onChange={(e) => { try { updateEdgeData(selectedEdge.id, { postFunctions: JSON.parse(e.target.value || '[]') }) } catch {} }}
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                />
-              </div>
-            </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Validators (JSON)</label>
+                      <textarea
+                        rows={3}
+                        value={JSON.stringify(((selectedEdge as any).data?.validators || []))}
+                        onChange={(e) => { try { updateEdgeData(selectedEdge.id, { validators: JSON.parse(e.target.value || '[]') }) } catch {} }}
+                        className="w-full p-2 border border-gray-300 rounded-md"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Post Functions (JSON)</label>
+                      <textarea
+                        rows={3}
+                        value={JSON.stringify(((selectedEdge as any).data?.postFunctions || []))}
+                        onChange={(e) => { try { updateEdgeData(selectedEdge.id, { postFunctions: JSON.parse(e.target.value || '[]') }) } catch {} }}
+                        className="w-full p-2 border border-gray-300 rounded-md"
+                      />
+                    </div>
+                  </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Triggers (JSON)</label>
-                <textarea
-                  rows={3}
-                  value={JSON.stringify(((selectedEdge as any).data?.triggers || []))}
-                  onChange={(e) => { try { updateEdgeData(selectedEdge.id, { triggers: JSON.parse(e.target.value || '[]') }) } catch {} }}
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Properties (JSON)</label>
-                <textarea
-                  rows={3}
-                  value={JSON.stringify(((selectedEdge as any).data?.properties || {}))}
-                  onChange={(e) => { try { updateEdgeData(selectedEdge.id, { properties: JSON.parse(e.target.value || '{}') }) } catch {} }}
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                />
-              </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Triggers (JSON)</label>
+                      <textarea
+                        rows={3}
+                        value={JSON.stringify(((selectedEdge as any).data?.triggers || []))}
+                        onChange={(e) => { try { updateEdgeData(selectedEdge.id, { triggers: JSON.parse(e.target.value || '[]') }) } catch {} }}
+                        className="w-full p-2 border border-gray-300 rounded-md"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Properties (JSON)</label>
+                      <textarea
+                        rows={3}
+                        value={JSON.stringify(((selectedEdge as any).data?.properties || {}))}
+                        onChange={(e) => { try { updateEdgeData(selectedEdge.id, { properties: JSON.parse(e.target.value || '{}') }) } catch {} }}
+                        className="w-full p-2 border border-gray-300 rounded-md"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div>
@@ -911,9 +969,7 @@ const EnhancedFlowEditor: React.FC<EnhancedFlowEditorProps & { project: any }> =
                 placeholder="e.g., Done, Won't Do"
               />
             </div>
-
             
-
             <div className="flex justify-end pt-4 border-t">
               <Button variant="accent" onClick={() => setShowEdgeProperties(false)}>Close</Button>
             </div>
@@ -1047,17 +1103,17 @@ const EnhancedFlowEditor: React.FC<EnhancedFlowEditorProps & { project: any }> =
       </Modal>
     </div>
   );
-};
+});
 
-const EnhancedFlowEditorInner: React.FC<EnhancedFlowEditorProps> = (props) => {
+const EnhancedFlowEditorInner = forwardRef<EnhancedFlowEditorHandle, EnhancedFlowEditorProps>((props, ref) => {
   const { project } = useReactFlow();
-  return <EnhancedFlowEditor {...props} project={project} />;
-};
+  return <EnhancedFlowEditor {...props} project={project} ref={ref} />;
+});
 
-const EnhancedFlowEditorWrapper: React.FC<EnhancedFlowEditorProps> = (props) => (
+const EnhancedFlowEditorWrapper = forwardRef<EnhancedFlowEditorHandle, EnhancedFlowEditorProps>((props, ref) => (
   <ReactFlowProvider>
-    <EnhancedFlowEditorInner {...props} />
+    <EnhancedFlowEditorInner {...props} ref={ref} />
   </ReactFlowProvider>
-);
+));
 
 export default EnhancedFlowEditorWrapper;

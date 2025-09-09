@@ -1,7 +1,7 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import Layout from '../components/Layout'
-import EnhancedFlowEditor from '../components/flow/EnhancedFlowEditor'
+import EnhancedFlowEditor, { type EnhancedFlowEditorHandle } from '../components/flow/EnhancedFlowEditor'
 import { apiService } from '../services/api'
 import { useAuth } from '../contexts/AuthContext'
 
@@ -15,6 +15,8 @@ export default function JiraWorkflowBuilder() {
   const [loading, setLoading] = useState(true)
   const [trainerName, setTrainerName] = useState<string>('Untitled Flow')
   const [flowId, setFlowId] = useState<string | null>(null)
+  const editorRef = useRef<EnhancedFlowEditorHandle | null>(null)
+  const [flowName, setFlowName] = useState<string>('Untitled Flow')
 
   useEffect(() => {
     let cancelled = false
@@ -35,6 +37,7 @@ export default function JiraWorkflowBuilder() {
           }
           if (!cancelled) {
             if (data?._id) setFlowId(data._id)
+            if (data?.name) setFlowName(data.name)
             setInitialNodes((data?.nodes || []).map((n: any) => ({
               id: n.id,
               type: n.type === 'end' ? 'completion' : n.type,
@@ -75,17 +78,19 @@ export default function JiraWorkflowBuilder() {
     const customEdges = edges.map(e => {
       const ed: any = (e as any).data || {}
       const ct = ed.conditionType || 'none'
-      const mappedType = ct === 'none' ? 'auto' : ct
+      const mappedType = ct === 'none' ? 'auto' : (ct === 'correctness' ? 'question' : ct)
+      const condition: any = {
+        type: mappedType,
+      }
+      if (mappedType === 'question') {
+        condition.keywords = Array.isArray(ed.keywords) ? ed.keywords : []
+      }
       return {
         id: e.id,
         from: e.source,
         to: e.target,
         label: e.label as string | undefined,
-        condition: {
-          type: mappedType,
-          keywords: Array.isArray(ed.keywords) ? ed.keywords : [],
-          expectedCorrectness: ed.expectedCorrectness || 'correct'
-        }
+        condition
       }
     })
     try {
@@ -103,9 +108,24 @@ export default function JiraWorkflowBuilder() {
   return (
     <Layout>
       <div className="p-6">
-        <div className="mb-4">
+        <div className="mb-4 flex items-center justify-between">
           <h1 className="text-2xl font-semibold text-gray-800">Training Track Designer</h1>
-          <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => editorRef.current?.save()}
+              className="px-3 py-1 rounded bg-blue-600 text-white text-sm hover:bg-blue-700"
+            >Save</button>
+            <button
+              onClick={() => editorRef.current?.validate()}
+              className="px-3 py-1 rounded bg-green-600 text-white text-sm hover:bg-green-700"
+            >Validate</button>
+            <button
+              onClick={() => editorRef.current?.exportFlow()}
+              className="px-3 py-1 rounded bg-purple-600 text-white text-sm hover:bg-purple-700"
+            >Export</button>
+          </div>
+        </div>
+        <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
             <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#eef6fb] text-[#0f3c4c] border border-[#d6eef7]">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7h18M3 12h18M3 17h18" />
@@ -128,16 +148,17 @@ export default function JiraWorkflowBuilder() {
                 {trainerName}
               </span>
             )}
-          </div>
         </div>
 
         <div className="h-[calc(100vh-6rem)] border rounded-lg overflow-hidden bg-white">
           {!loading && (
             <EnhancedFlowEditor
+              ref={editorRef}
               initialNodes={initialNodes}
               initialEdges={initialEdges}
-              initialName={trainerName}
-              showTopPanel={true}
+              initialName={flowName}
+              onNameChange={setFlowName}
+              showTopPanel={false}
               autoSave={false}
               onSave={handleSave}
             />

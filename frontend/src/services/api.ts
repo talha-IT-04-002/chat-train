@@ -395,6 +395,13 @@ class ApiService {
     });
   }
 
+  public async sendSessionMessage(sessionId: string, message: string): Promise<ApiResponse<{ aiMessage: any; status: string }>> {
+    return this.request<{ aiMessage: any; status: string }>(`/sessions/${sessionId}/messages`, {
+      method: 'POST',
+      body: JSON.stringify({ message })
+    });
+  }
+
   public async getAnalytics(organizationId: string, filters?: any): Promise<ApiResponse<any>> {
     const params = new URLSearchParams({ organizationId, ...filters });
     return this.request<any>(`/analytics?${params}`);

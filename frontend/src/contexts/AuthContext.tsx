@@ -224,6 +224,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = () => {
     apiService.clearToken();
     dispatch({ type: 'LOGOUT' });
+    // Reset theme preference to system on logout
+    try {
+      localStorage.setItem('theme', 'system');
+    } catch {}
+    // Notify the app to reconfigure theme listeners and apply system preference
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('themechange'))
+    }
   };
 
   const setCurrentOrganization = (organization: Organization) => {

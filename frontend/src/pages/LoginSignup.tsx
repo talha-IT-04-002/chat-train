@@ -82,7 +82,7 @@ function LoginSignup() {
       })
   }
   return (
-    <div className="h-screen bg-gradient-to-br from-[#f8fafc] via-white to-[#f1f5f9] dark:from-gray-900 dark:via-gray-900 dark:to-gray-900 flex overflow-hidden" style={{ fontFamily: 'Inter, sans-serif' }}>
+    <div className="h-screen bg-gradient-to-br from-[#f8fafc] via-white to-[#f1f5f9] flex overflow-hidden" style={{ fontFamily: 'Inter, sans-serif' }}>
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">        
         <div className="absolute inset-0">
           <div className="absolute top-20 left-20 w-32 h-32 bg-white/10 rounded-full blur-xl animate-pulse"></div>
@@ -99,7 +99,7 @@ function LoginSignup() {
           <div className="text-center text-white max-w-md">
             
             <div className="inline-flex items-center justify-center mb-8">
-              <img src={logo} alt="Chat Train Logo" className="drop-shadow-lg" />
+              <img src={logo} alt="ChatTrain Logo" className="drop-shadow-lg" />
             </div>
             <div className="absolute top-1/4 right-1/4 w-2 h-2 bg-white/40 rounded-full animate-bounce"></div>
             <div className="absolute bottom-1/3 left-1/4 w-1 h-1 bg-white/30 rounded-full animate-ping"></div>
@@ -108,9 +108,9 @@ function LoginSignup() {
       </div>
       <div className="w-full lg:w-1/2 flex items-center p-4 lg:p-8 relative overflow-hidden">
         <div className="absolute inset-0">
-          <div className="absolute top-20 right-20 w-16 h-16 bg-gradient-to-r from-[#40B1DF]/20 to-[#3aa0c9]/20 rounded-full blur-xl animate-pulse"></div>
-          <div className="absolute bottom-32 left-16 w-12 h-12 bg-gradient-to-r from-[#40B1DF]/15 to-[#3aa0c9]/15 rounded-full blur-lg animate-pulse delay-1000"></div>
-          <div className="absolute top-1/2 right-1/3 w-8 h-8 bg-gradient-to-r from-[#40B1DF]/10 to-[#3aa0c9]/10 rounded-full blur-md animate-pulse delay-500"></div>
+          <div className="absolute top-20 right-20 w-16 h-16 bg-gradient-to-r from-[#40B1DF]/20 to-[#40B1DF]/0 rounded-full blur-xl animate-pulse"></div>
+          <div className="absolute bottom-32 left-16 w-12 h-12 bg-gradient-to-r from-[#40B1DF]/15 to-[#40B1DF]/0 rounded-full blur-lg animate-pulse delay-1000"></div>
+          <div className="absolute top-1/2 right-1/3 w-8 h-8 bg-gradient-to-r from-[#40B1DF]/10 to-[#40B1DF]/0 rounded-full blur-md animate-pulse delay-500"></div>
           <div className="absolute inset-0 opacity-5">
             <div className="absolute inset-0" style={{
               backgroundImage: `radial-gradient(circle at 1px 1px, #40B1DF 1px, transparent 0)`,
@@ -118,34 +118,34 @@ function LoginSignup() {
             }}></div>
           </div>          
           <div className="absolute top-1/4 left-1/4 w-1 h-1 bg-[#40B1DF]/40 rounded-full animate-bounce"></div>
-          <div className="absolute bottom-1/3 right-1/4 w-1 h-1 bg-[#3aa0c9]/30 rounded-full animate-ping"></div>
+          <div className="absolute bottom-1/3 right-1/4 w-1 h-1 bg-[#40B1DF]/30 rounded-full animate-ping"></div>
           <div className="absolute top-2/3 left-1/3 w-1 h-1 bg-[#40B1DF]/50 rounded-full animate-bounce delay-1000"></div>
           <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#40B1DF]/5 to-transparent"></div>
         </div>       
         <div className="w-full max-w-md relative z-10">
           <div className="text-center mb-6 lg:hidden">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-white rounded-2xl shadow-lg mb-4">
-              <img src={logo} alt="Chat Train Logo" className="h-10 w-auto" />
+              <img src={logo} alt="ChatTrain Logo" className="h-10 w-auto" />
             </div>
-            <h1 className="text-2xl font-bold text-[#313F4E] dark:text-white tracking-tight mb-2">
-              Welcome to Chat Train
+            <h1 className="text-2xl font-bold text-[#313F4E] tracking-tight mb-2">
+              Welcome to ChatTrain
             </h1>
-            <p className="text-[#64748b] dark:text-gray-400 text-sm">
-              Sign in to your account to continue
+            <p className="text-[#64748b] text-sm">
+              All aboard! Sign in to propel your training forward
             </p>
           </div>
           <div className="hidden lg:block mb-6 text-center">
-            <h2 className="text-3xl font-bold text-[#313F4E] dark:text-white mb-2">
-              Sign in to Chat Train
+            <h2 className="text-3xl font-bold text-[#313F4E] mb-2">
+              Sign in to ChatTrain
             </h2>
-            <p className="text-[#64748b] dark:text-gray-400">
-              AI-powered chat training journey
+            <p className="text-[#64748b]">
+              The L&D Engine - Propelling Training Forward
             </p>
           </div>
           <div className="p-6 transition-all duration-300">
             <form className="space-y-4" onSubmit={handleSignIn}>
               <div>
-                <label className="block text-sm font-semibold text-[#313F4E] dark:text-white mb-2">
+                <label className="block text-sm font-semibold text-[#313F4E] mb-2">
                   Email Address
                 </label>
                 <div className="relative group">
@@ -157,12 +157,12 @@ function LoginSignup() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your email"
-                    className="w-full pl-10 pr-4 py-3 border border-[#e2e8f0] dark:border-gray-700 rounded-2xl text-[#313F4E] dark:text-white placeholder-[#64748b] dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#40B1DF] focus:border-transparent transition-all duration-300 bg-white/50 dark:bg-gray-800/70 backdrop-blur-sm group-hover:bg-white dark:group-hover:bg-gray-800"
+                    className="w-full pl-10 pr-4 py-3 border border-[#e2e8f0] rounded-2xl text-[#313F4E] placeholder-[#64748b] focus:outline-none focus:ring-2 focus:ring-[#40B1DF] focus:border-transparent transition-all duration-300 bg-white/50 backdrop-blur-sm group-hover:bg-white"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-[#313F4E] dark:text-white mb-2">
+                <label className="block text-sm font-semibold text-[#313F4E] mb-2">
                   Password
                 </label>
                 <div className="relative group">
@@ -174,7 +174,7 @@ function LoginSignup() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter your password"
-                    className="w-full pl-10 pr-10 py-3 border border-[#e2e8f0] dark:border-gray-700 rounded-2xl text-[#313F4E] dark:text-white placeholder-[#64748b] dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#40B1DF] focus:border-transparent transition-all duration-300 bg-white/50 dark:bg-gray-800/70 backdrop-blur-sm group-hover:bg-white dark:group-hover:bg-gray-800"
+                    className="w-full pl-10 pr-10 py-3 border border-[#e2e8f0] rounded-2xl text-[#313F4E] placeholder-[#64748b] focus:outline-none focus:ring-2 focus:ring-[#40B1DF] focus:border-transparent transition-all duration-300 bg-white/50 backdrop-blur-sm group-hover:bg-white"
                   />
                   <button
                     type="button"
@@ -195,14 +195,14 @@ function LoginSignup() {
                     type="checkbox"
                     className="h-4 w-4 text-[#40B1DF] focus:ring-[#40B1DF] border-[#e2e8f0] rounded transition-all duration-300"
                   />
-                  <span className="ml-2 text-sm text-[#64748b] dark:text-gray-300 group-hover:text-[#313F4E] dark:group-hover:text-white transition-colors duration-300">
+                  <span className="ml-2 text-sm text-[#64748b] group-hover:text-[#313F4E] transition-colors duration-300">
                     Remember me
                   </span>
                 </label>
                 <button
                   type="button"
                   onClick={handleForgotPassword}
-                  className="text-sm text-[#40B1DF] hover:text-[#3aa0c9] font-medium transition-colors duration-300 hover:underline"
+                  className="text-sm text-[#40B1DF] hover:text-[#40B1DF]/80 font-medium transition-colors duration-300 hover:underline"
                 >
                   Forgot password?
                 </button>
@@ -211,8 +211,7 @@ function LoginSignup() {
                 variant="primary" 
                 size="lg" 
                 type="submit"
-                disabled={isLoading}
-                className="w-full py-3 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-3 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02]"
               >
                 {isLoading ? (
                   <>
@@ -230,11 +229,11 @@ function LoginSignup() {
               </Button>
             </form>
             <div className="text-center mt-6">
-              <p className="text-[#64748b] dark:text-gray-400 text-sm">
+              <p className="text-[#64748b] text-sm">
                 Don't have an account?{' '}
                 <Link
                   to="/signup"
-                  className="text-[#40B1DF] hover:text-[#3aa0c9] font-semibold transition-colors duration-300 hover:underline"
+                  className="text-[#40B1DF] hover:text-[#40B1DF]/80 font-semibold transition-colors duration-300 hover:underline"
                 >
                   Sign up for free
                 </Link>
@@ -242,13 +241,13 @@ function LoginSignup() {
             </div>
           </div>
           <div className="text-center mt-4">
-            <p className="text-xs text-[#64748b] dark:text-gray-500">
+            <p className="text-xs text-[#64748b]">
               By signing in, you agree to our{' '}
-              <Link to="#" className="text-[#40B1DF] hover:text-[#3aa0c9] transition-colors duration-300 hover:underline">
+              <Link to="#" className="text-[#40B1DF] hover:text-[#40B1DF]/80 transition-colors duration-300 hover:underline">
                 Terms of Service
               </Link>{' '}
               and{' '}
-              <Link to="#" className="text-[#40B1DF] hover:text-[#3aa0c9] transition-colors duration-300 hover:underline">
+              <Link to="#" className="text-[#40B1DF] hover:text-[#40B1DF]/80 transition-colors duration-300 hover:underline">
                 Privacy Policy
               </Link>
             </p>
@@ -307,7 +306,6 @@ function LoginSignup() {
               variant="primary" 
               size="md" 
               onClick={confirmResetPassword}
-              disabled={forgotLoading}
               className="flex-1"
             >
               {forgotLoading ? 'Sending...' : 'Send Reset Link'}

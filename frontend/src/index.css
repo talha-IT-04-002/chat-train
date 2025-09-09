@@ -15,7 +15,7 @@
   --text-secondary: #64748b;
   --text-muted: #94a3b8;
   
-  font-family: 'Inter', Arial, sans-serif;
+  font-family: Arial, sans-serif;
   line-height: 1.6;
   font-weight: 400;
   color: var(--accent-dark-blue);
@@ -27,24 +27,15 @@
 }
 
 .dark {
-  --surface-white: #1f2937;
-  --surface-gray: #111827;
-  --border-light: #374151;
-  --text-primary: #f9fafb;
-  --text-secondary: #d1d5db;
-  --text-muted: #9ca3af;
-  --accent-dark-blue: #f9fafb;
+  /* Dark theme tokens - improved contrast */
+  --surface-white: #0b1220; /* deep panel */
+  --surface-gray: #0a0f1a; /* app background */
+  --border-light: #1f2a37; /* subtle border */
+  --text-primary: #e5e7eb; /* primary text */
+  --text-secondary: #a3b0bf; /* secondary text */
+  --text-muted: #7a8a9b; /* muted text */
+  --accent-dark-blue: #e5e7eb; /* headings color */
 }
-
-.dark .text-\[\#313F4E\] { color: var(--text-primary) !important; }
-.dark .text-\[\#64748b\] { color: var(--text-secondary) !important; }
-.dark .border-\[\#e2e8f0\] { border-color: var(--border-light) !important; }
-.dark .bg-\[\#f8fafc\] { background-color: var(--surface-white) !important; }
-.dark .bg-white\/50 { background-color: rgba(31, 41, 55, 0.5) !important; }
-.dark .hover\:bg-\[\#f8fafc\]:hover { background-color: #1f2937 !important; }
-.dark .hover\:bg-white:hover { background-color: #1f2937 !important; }
-.dark .hover\:bg-surface-gray:hover { background-color: #1f2937 !important; }
-.dark .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0,0,0,0.4); }
 
 
 .heading-font {
@@ -54,7 +45,7 @@
 }
 
 .body-font {
-  font-family: 'Inter', Arial, sans-serif;
+  font-family: Arial, sans-serif;
   font-weight: 400;
 }
 
@@ -114,50 +105,7 @@
   border-color: var(--border-light);
 }
 
-.dark .bg-white {
-  background-color: var(--surface-white);
-}
-
-.dark input,
-.dark textarea,
-.dark select {
-  background-color: var(--surface-white);
-  border-color: var(--border-light);
-  color: var(--text-primary);
-}
-
-.dark input::placeholder,
-.dark textarea::placeholder {
-  color: var(--text-muted);
-}
-
-.dark .text-gray-900 {
-  color: var(--text-primary);
-}
-
-.dark .text-gray-400 {
-  color: var(--text-secondary);
-}
-
-.dark .bg-gray-800 {
-  background-color: var(--surface-white);
-}
-
-.dark .bg-gray-700 {
-  background-color: #374151;
-}
-
-.dark .bg-gray-900 {
-  background-color: var(--surface-gray);
-}
-
-.dark .border-gray-700 {
-  border-color: var(--border-light);
-}
-
-.dark .text-white {
-  color: var(--text-primary);
-}
+ 
 
 .shadow-sm {
   box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
@@ -225,15 +173,15 @@ body {
   margin: 0; 
   min-width: 320px; 
   min-height: 100vh; 
-  color: var(--accent-dark-blue);
+  color: var(--text-primary);
   background-color: var(--surface-gray);
-  font-family: 'Inter', Arial, sans-serif;
+  font-family: Arial, sans-serif;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Inter', sans-serif;
   font-weight: 700;
-  color: var(--accent-dark-blue);
+  color: var(--text-primary);
   letter-spacing: -0.025em;
   line-height: 1.2;
 }
@@ -244,7 +192,7 @@ button {
   padding: 0.75em 1.5em;
   font-size: 0.875rem;
   font-weight: 600;
-  font-family: 'Inter', sans-serif;
+  font-family: Arial, sans-serif;
   background-color: var(--accent-dark-blue);
   color: white;
   cursor: pointer;
@@ -268,7 +216,7 @@ input, textarea, select {
   border: 1px solid var(--border-light);
   padding: 0.75rem 1rem;
   font-size: 0.875rem;
-  font-family: 'Inter', sans-serif;
+  font-family: Arial, sans-serif;
   background-color: var(--surface-white);
   color: var(--text-primary);
   transition: all 0.2s ease;
@@ -325,7 +273,7 @@ input::placeholder, textarea::placeholder {
 }
 
 .btn-accent:hover {
-  background: #3aa0c9;
+  background: #40B1DF;
   transform: translateY(-1px);
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
@@ -337,7 +285,7 @@ input::placeholder, textarea::placeholder {
   border-radius: 9999px;
   font-size: 0.75rem;
   font-weight: 500;
-  font-family: 'Inter', sans-serif;
+  font-family: Arial, sans-serif;
   transition: all 0.2s ease;
 }
 
@@ -369,20 +317,6 @@ input::placeholder, textarea::placeholder {
   }
 }
 
-@media (prefers-color-scheme: light) {
-  :root { 
-    color: var(--accent-dark-blue); 
-    background-color: var(--surface-gray); 
-  }
-  a:hover { 
-    color: var(--primary-light-blue); 
-  }
-  button { 
-    background-color: var(--accent-dark-blue); 
-    color: white;
-  }
-}
-
 .sticky-flex-container {
   position: fixed;
   top: 0;
@@ -391,3 +325,58 @@ input::placeholder, textarea::placeholder {
   align-items: center;
   padding: 10px;
 }
+
+/* Dark mode utility overrides for common hard-coded colors */
+.dark .bg-white { background-color: #111827 !important; } /* gray-900 */
+.dark .bg-\[\#f8fafc\] { background-color: #0b1324 !important; }
+.dark .border-\[\#e2e8f0\] { border-color: #1f2937 !important; }
+.dark .text-\[\#313F4E\] { color: #e5e7eb !important; }
+.dark .text-\[\#64748b\] { color: #9ca3af !important; }
+.dark .from-white { --tw-gradient-from: #0b1324 var(--tw-gradient-from-position); --tw-gradient-to: rgb(11 19 36 / 0) var(--tw-gradient-to-position); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+.dark .to-surface-gray { --tw-gradient-to: #0b1324 var(--tw-gradient-to-position); }
+
+/* Inputs in dark */
+.dark input, .dark textarea, .dark select {
+  background-color: #0b1324;
+  border-color: #1f2937;
+  color: #e5e7eb;
+}
+.dark input::placeholder, .dark textarea::placeholder { color: #6b7280; }
+
+/* Cards in dark */
+.dark .card {
+  background: #111827;
+  border-color: #1f2937;
+}
+.dark .card:hover {
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.35), 0 4px 6px -4px rgb(0 0 0 / 0.35);
+}
+
+/* Links in dark */
+.dark a { color: #67c2e6; }
+.dark a:hover { color: #8ad2ee; }
+
+/* Buttons (fallbacks) in dark - component buttons already themed */
+.dark button {
+  background-color: #1f2937;
+  color: #e5e7eb;
+  border-color: transparent;
+}
+.dark button:hover {
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+}
+
+/* Map white alpha backgrounds to dark alpha equivalents */
+.dark .bg-white\/5 { background-color: rgba(17, 24, 39, 0.05) !important; }
+.dark .bg-white\/8 { background-color: rgba(17, 24, 39, 0.08) !important; }
+.dark .bg-white\/10 { background-color: rgba(17, 24, 39, 0.10) !important; }
+.dark .bg-white\/20 { background-color: rgba(17, 24, 39, 0.20) !important; }
+.dark .bg-white\/30 { background-color: rgba(17, 24, 39, 0.30) !important; }
+.dark .bg-white\/40 { background-color: rgba(17, 24, 39, 0.40) !important; }
+.dark .bg-white\/50 { background-color: rgba(17, 24, 39, 0.50) !important; }
+.dark .bg-white\/60 { background-color: rgba(17, 24, 39, 0.60) !important; }
+
+/* Scrollbar in dark */
+.dark ::-webkit-scrollbar-track { background: #0b1324; }
+.dark ::-webkit-scrollbar-thumb { background: #1f2937; }
+.dark ::-webkit-scrollbar-thumb:hover { background: #374151; }

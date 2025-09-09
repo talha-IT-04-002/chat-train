@@ -11,13 +11,20 @@ function Layout({ children }: LayoutProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   useEffect(() => {
-    if (location.pathname === '/trainer-builder') {
+    const stored = localStorage.getItem('sidebarCollapsed')
+    if (stored !== null) setSidebarCollapsed(stored === 'true')
+  }, [])
+  useEffect(() => {
+    const forceCollapse = location.pathname === '/trainer-builder' || /\/trainers\/.+\/workflow$/.test(location.pathname)
+    if (forceCollapse) {
       setSidebarCollapsed(true)
-    } else {
-      setSidebarCollapsed(false)
     }
     setMobileMenuOpen(false)
   }, [location.pathname])  
+  useEffect(() => {
+    localStorage.setItem('sidebarCollapsed', String(sidebarCollapsed))
+    ;(window as any).toggleSidebar = () => setSidebarCollapsed((v) => !v)
+  }, [sidebarCollapsed])
   const toggleSidebar = () => {
     setSidebarCollapsed(!sidebarCollapsed)
   }
@@ -25,14 +32,32 @@ function Layout({ children }: LayoutProps) {
     setMobileMenuOpen(!mobileMenuOpen)
   }
   return (
-    <div className="min-h-screen bg-surface-gray dark:bg-gray-900 text-accent 
-    dark:text-white font-family: Inter, sans-serif transition-colors 
+    <div className="min-h-screen bg-surface-gray text-accent transition-colors 
       duration-200">
       <div className="flex">  
+        {/* Global floating sidebar toggle (desktop) */}
+        <button
+          onClick={() => setSidebarCollapsed((v) => !v)}
+          className="hidden lg:flex fixed left-6 top-6 z-50 p-3 rounded-full shadow-lg bg-gradient-to-r from-[#40B1DF] to-[#40B1DF] text-white hover:shadow-xl"
+          title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          style={{ padding: '10px' }}
+        >
+          {sidebarCollapsed ? (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          ) : (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          )}
+        </button>
+
         <div className="lg:hidden fixed top-4 left-4 z-50">
           <button
             onClick={toggleMobileMenu}
-            className="p-3 rounded-xl bg-gradient-to-r from-[#40B1DF] to-[#3aa0c9] shadow-lg flex items-center justify-center hover:shadow-xl transition-all duration-200"
+            className="p-3 rounded-xl bg-gradient-to-r from-[#40B1DF] to-[#40B1DF] 
+            shadow-lg flex items-center justify-center hover:shadow-xl transition-all duration-200"
             title="Toggle Menu"
           >
             <svg 
@@ -52,12 +77,12 @@ function Layout({ children }: LayoutProps) {
         <div className={`absolute top-0 ${sidebarCollapsed ? '' : 'left-50'} p-4 hidden lg:block`}>
             <button
               onClick={toggleSidebar}
-              className={`w-full p-2 rounded-lg dark:bg-[#FFFFFF] flex items-center ${sidebarCollapsed ? 'justify-center' : 'gap-2'}`}
+              className={`w-full p-2 rounded-lg flex items-center ${sidebarCollapsed ? 'justify-center' : 'gap-2'}`}
               title={sidebarCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
               style={{backgroundColor: '#FFFFFF',outline:'none',border:'none',boxShadow:'none'}}
             >
               <svg 
-                className={`w-5 h-5 text-secondary dark:text-gray-400 transition-transform duration-300 ${sidebarCollapsed ? 'rotate-180' : ''}`} 
+                className={`w-5 h-5 text-secondary transition-transform duration-300 ${sidebarCollapsed ? 'rotate-180' : ''}`} 
                 fill="none" 
                 stroke="currentColor" 
                 viewBox="0 0 24 24"
@@ -69,8 +94,8 @@ function Layout({ children }: LayoutProps) {
         {mobileMenuOpen && (
           <div className="lg:hidden fixed inset-0 z-40">
             <div className="fixed inset-0 bg-black bg-opacity-50" onClick={toggleMobileMenu}></div>
-            <aside className="fixed left-0 top-0 h-full w-72 bg-white dark:bg-gray-800 shadow-xl transform transition-transform duration-300 ease-in-out z-50">
-              <div className="px-6 py-8 border-b border-light dark:border-gray-700 from-white dark:from-gray-800 to-surface-gray dark:to-gray-900">
+            <aside className="fixed left-0 top-0 h-full w-72 bg-white shadow-xl transform transition-transform duration-300 ease-in-out z-50">
+              <div className="px-6 py-8 border-b border-light from-white to-surface-gray">
                 <div className="flex items-center justify-center">
                   <img src={logo} alt="Chat Train Logo" onClick={() => window.location.href = '/dashboard'} className="cursor-pointer h-20 w-auto drop-shadow-sm" />
                 </div>
@@ -81,7 +106,7 @@ function Layout({ children }: LayoutProps) {
                     <li>
                       <Link 
                         to="/dashboard" 
-                        className="flex items-center gap-4 rounded-xl px-4 py-3 font-medium transition-all duration-200 hover:bg-surface-gray dark:hover:bg-gray-700 hover:text-accent dark:hover:text-white"
+                        className="flex items-center gap-4 rounded-xl px-4 py-3 font-medium transition-all duration-200 hover:bg-surface-gray hover:text-accent"
                         onClick={toggleMobileMenu}
                       >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -94,7 +119,7 @@ function Layout({ children }: LayoutProps) {
                     <li>
                       <Link 
                         to="/build-new-trainer" 
-                        className="flex items-center gap-4 rounded-xl px-4 py-3 font-medium transition-all duration-200 hover:bg-surface-gray dark:hover:bg-gray-700 hover:text-accent dark:hover:text-white"
+                        className="flex items-center gap-4 rounded-xl px-4 py-3 font-medium transition-all duration-200 hover:bg-surface-gray hover:text-accent"
                         onClick={toggleMobileMenu}
                       >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -106,7 +131,7 @@ function Layout({ children }: LayoutProps) {
                     {/* <li>
                       <Link 
                         to="/trainer-test" 
-                        className="flex items-center gap-4 rounded-xl px-4 py-3 font-medium transition-all duration-200 hover:bg-surface-gray dark:hover:bg-gray-700 hover:text-accent dark:hover:text-white"
+                        className="flex items-center gap-4 rounded-xl px-4 py-3 font-medium transition-all duration-200 hover:bg-surface-gray hover:text-accent"
                         onClick={toggleMobileMenu}
                       >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -118,7 +143,7 @@ function Layout({ children }: LayoutProps) {
                     <li>
                       <Link 
                         to="/manage-key" 
-                        className="flex items-center gap-4 rounded-xl px-4 py-3 font-medium transition-all duration-200 hover:bg-surface-gray dark:hover:bg-gray-700 hover:text-accent dark:hover:text-white"
+                        className="flex items-center gap-4 rounded-xl px-4 py-3 font-medium transition-all duration-200 hover:bg-surface-gray hover:text-accent"
                         onClick={toggleMobileMenu}
                       >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -130,7 +155,7 @@ function Layout({ children }: LayoutProps) {
                     <li>
                       <Link 
                         to="/manage-team" 
-                        className="flex items-center gap-4 rounded-xl px-4 py-3 font-medium transition-all duration-200 hover:bg-surface-gray dark:hover:bg-gray-700 hover:text-accent dark:hover:text-white"
+                        className="flex items-center gap-4 rounded-xl px-4 py-3 font-medium transition-all duration-200 hover:bg-surface-gray hover:text-accent"
                         onClick={toggleMobileMenu}
                       >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -140,11 +165,11 @@ function Layout({ children }: LayoutProps) {
                       </Link>
                     </li>
                   </ul>
-                  <div className="pt-6 mt-6 border-t border-light dark:border-gray-700">
-                    <h3 className="text-xs font-semibold text-secondary dark:text-gray-400 uppercase tracking-wider mb-4 px-3">Settings</h3>
+                  <div className="pt-6 mt-6 border-t border-light">
+                    <h3 className="text-xs font-semibold text-secondary uppercase tracking-wider mb-4 px-3">Settings</h3>
                     <Link 
                       to="/settings" 
-                      className="flex items-center gap-4 rounded-xl px-4 py-3 font-medium transition-all duration-200 hover:bg-surface-gray dark:hover:bg-gray-700 hover:text-accent dark:hover:text-white"
+                      className="flex items-center gap-4 rounded-xl px-4 py-3 font-medium transition-all duration-200 hover:bg-surface-gray hover:text-accent"
                       onClick={toggleMobileMenu}
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -162,8 +187,8 @@ function Layout({ children }: LayoutProps) {
             </aside>
           </div>
         )}
-        <aside className={`${sidebarCollapsed ? 'w-16' : 'w-72'} min-h-screen lg:h-screen lg:sticky lg:top-0 bg-white dark:bg-gray-800 border-r border-light dark:border-gray-700 hidden lg:flex flex-col shadow-lg transition-all duration-300 ease-in-out`}>
-          <div className={`${sidebarCollapsed ? 'px-2' : 'px-8'} py-10 border-b border-light dark:border-gray-700 from-white dark:from-gray-800 to-surface-gray dark:to-gray-900 transition-all duration-300`}>
+        <aside className={`${sidebarCollapsed ? 'w-16' : 'w-72'} min-h-screen lg:h-screen lg:sticky lg:top-0 bg-white border-r border-light hidden lg:flex flex-col shadow-lg transition-all duration-300 ease-in-out`}>
+          <div className={`${sidebarCollapsed ? 'px-2' : 'px-8'} py-10 border-b border-light from-white to-surface-gray transition-all duration-300`}>
             <div className="flex items-center justify-center">
               {!sidebarCollapsed && (
                 <img src={logo} alt="Chat Train Logo" onClick={() => window.location.href = '/dashboard'} className="cursor-pointer h-24 w-auto drop-shadow-sm" />
@@ -178,8 +203,8 @@ function Layout({ children }: LayoutProps) {
                     to="/dashboard" 
                     className={`flex items-center ${sidebarCollapsed ? 'hidden' : 'gap-4'} rounded-xl px-4 py-3 font-medium transition-all duration-200 ${
                       location.pathname === '/dashboard' 
-                        ? 'bg-gradient-to-r from-[#40B1DF] to-[#3aa0c9] text-[#313F4E] shadow-md transform scale-105' 
-                        : 'text-secondary dark:text-gray-400 hover:bg-surface-gray dark:hover:bg-gray-700 hover:text-accent dark:hover:text-white hover:transform hover:scale-105'
+                        ? 'bg-gradient-to-r from-[#40B1DF] to-[#40B1DF] text-[#313F4E] shadow-md transform scale-105' 
+                        : 'text-secondary hover:bg-surface-gray hover:text-accent hover:transform hover:scale-105'
                     }`}
                     style={{color: location.pathname === '/dashboard' ? 'white' : ''}}
                     title={sidebarCollapsed ? 'Dashboard' : ''}
@@ -196,8 +221,8 @@ function Layout({ children }: LayoutProps) {
                     to="/build-new-trainer" 
                     className={`flex items-center ${sidebarCollapsed ? 'hidden' : 'gap-4'} rounded-xl px-4 py-3 font-medium transition-all duration-200 ${
                       location.pathname === '/build-new-trainer' 
-                        ? 'bg-gradient-to-r from-[#40B1DF] to-[#3aa0c9] text-[#313F4E] shadow-md transform scale-105' 
-                        : 'text-secondary dark:text-gray-400 hover:bg-surface-gray dark:hover:bg-gray-700 hover:text-accent dark:hover:text-white hover:transform hover:scale-105'
+                        ? 'bg-gradient-to-r from-[#40B1DF] to-[#40B1DF] text-[#313F4E] shadow-md transform scale-105' 
+                        : 'text-secondary hover:bg-surface-gray hover:text-accent hover:transform hover:scale-105'
                     }`}
                     style={{color: location.pathname === '/build-new-trainer' ? 'white' : ''}}
                     title={sidebarCollapsed ? 'Build New Trainer' : ''}
@@ -213,8 +238,8 @@ function Layout({ children }: LayoutProps) {
                     to="/trainer-test" 
                     className={`flex items-center ${sidebarCollapsed ? 'hidden' : 'gap-4'} rounded-xl px-4 py-3 font-medium transition-all duration-200 ${
                       location.pathname === '/trainer-test' 
-                        ? 'bg-gradient-to-r from-[#40B1DF] to-[#3aa0c9] text-[#313F4E] shadow-md transform scale-105' 
-                        : 'text-secondary dark:text-gray-400 hover:bg-surface-gray dark:hover:bg-gray-700 hover:text-accent dark:hover:text-white hover:transform hover:scale-105'
+                        ? 'bg-gradient-to-r from-[#40B1DF] to-[#40B1DF] text-[#313F4E] shadow-md transform scale-105' 
+                        : 'text-secondary hover:bg-surface-gray hover:text-accent hover:transform hover:scale-105'
                     }`}
                     style={{color: location.pathname === '/trainer-test' ? 'white' : ''}}
                     title={sidebarCollapsed ? 'Test Trainers' : ''}
@@ -225,13 +250,14 @@ function Layout({ children }: LayoutProps) {
                     {!sidebarCollapsed && 'Test Trainers'}
                   </Link>
                 </li> */}
+                
                 <li>
                   <Link 
                     to="/manage-key" 
                     className={`flex items-center ${sidebarCollapsed ? 'hidden' : 'gap-4'} rounded-xl px-4 py-3 font-medium transition-all duration-200 ${
                       location.pathname === '/manage-key' 
-                        ? 'bg-gradient-to-r from-[#40B1DF] to-[#3aa0c9] text-[#313F4E] shadow-md transform scale-105' 
-                        : 'text-secondary dark:text-gray-400 hover:bg-surface-gray dark:hover:bg-gray-700 hover:text-accent dark:hover:text-white hover:transform hover:scale-105'
+                        ? 'bg-gradient-to-r from-[#40B1DF] to-[#40B1DF] text-[#313F4E] shadow-md transform scale-105' 
+                        : 'text-secondary hover:bg-surface-gray hover:text-accent hover:transform hover:scale-105'
                     }`}
                     style={{color: location.pathname === '/manage-key' ? 'white' : ''}}
                     title={sidebarCollapsed ? 'Manage Keys' : ''}
@@ -247,8 +273,8 @@ function Layout({ children }: LayoutProps) {
                     to="/manage-team" 
                     className={`flex items-center ${sidebarCollapsed ? 'hidden' : 'gap-4'} rounded-xl px-4 py-3 font-medium transition-all duration-200 ${
                       location.pathname === '/manage-team' 
-                        ? 'bg-gradient-to-r from-[#40B1DF] to-[#3aa0c9] text-[#313F4E] shadow-md transform scale-105' 
-                        : 'text-secondary dark:text-gray-400 hover:bg-surface-gray dark:hover:bg-gray-700 hover:text-accent dark:hover:text-white hover:transform hover:scale-105'
+                        ? 'bg-gradient-to-r from-[#40B1DF] to-[#40B1DF] text-[#313F4E] shadow-md transform scale-105' 
+                        : 'text-secondary hover:bg-surface-gray hover:text-accent hover:transform hover:scale-105'
                     }`}
                     style={{color: location.pathname === '/manage-team' ? 'white' : ''}}
                     title={sidebarCollapsed ? 'Manage Team' : ''}
@@ -260,16 +286,16 @@ function Layout({ children }: LayoutProps) {
                   </Link>
                 </li>
               </ul>
-              <div className="pt-6 mt-6 border-t border-light dark:border-gray-700">
+              <div className="pt-6 mt-6 border-t border-light">
                 {!sidebarCollapsed && (
-                  <h3 className="text-xs font-semibold text-secondary dark:text-gray-400 uppercase tracking-wider mb-4 px-3">Settings</h3>
+                  <h3 className="text-xs font-semibold text-secondary uppercase tracking-wider mb-4 px-3">Settings</h3>
                 )}
                 <Link 
                   to="/settings"
                   className={`flex items-center ${sidebarCollapsed ? 'hidden' : 'gap-4'} rounded-xl px-4 py-3 font-medium transition-all duration-200 ${
                     location.pathname === '/settings' 
-                      ? 'bg-gradient-to-r from-[#40B1DF] to-[#3aa0c9] text-[#313F4E] shadow-md transform scale-105' 
-                      : 'text-secondary dark:text-gray-400 hover:bg-surface-gray dark:hover:bg-gray-700 hover:text-accent dark:hover:text-white hover:transform hover:scale-105'
+                      ? 'bg-gradient-to-r from-[#40B1DF] to-[#40B1DF] text-[#313F4E] shadow-md transform scale-105' 
+                      : 'text-secondary hover:bg-surface-gray hover:text-accent hover:transform hover:scale-105'
                   }`}
                 style={{color: location.pathname === '/settings' ? 'white' : ''}}
                 title={sidebarCollapsed ? 'Settings' : ''}

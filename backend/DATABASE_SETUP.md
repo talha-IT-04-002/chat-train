@@ -1,6 +1,6 @@
 # Database Setup Guide
 
-This guide will help you set up the database for the Chat Train platform.
+This guide will help you set up the database for ChatTrain: Propelling Training Forward.
 
 ## Quick Start Options
 
@@ -80,7 +80,7 @@ Make sure your `.env` file contains:
 
 ```env
 # Database Configuration
-MONGODB_URI=mongodb://localhost:27017/chat-train
+   MONGODB_URI=mongodb://localhost:27017/chattrain
 # OR for Atlas:
 # MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/chat-train?retryWrites=true&w=majority
 

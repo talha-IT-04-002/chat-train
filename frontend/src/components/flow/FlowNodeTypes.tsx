@@ -1,6 +1,6 @@
 import React from 'react';
 import { Handle, Position } from 'reactflow';
-import { Rocket, BookOpen, HelpCircle, GitBranch, MessageSquare, BarChart3, CheckCircle2, Image as ImageIcon, Music2, Clapperboard, Paperclip } from 'lucide-react';
+import { Rocket, BookOpen, HelpCircle, GitBranch, CheckCircle2, Image as ImageIcon, Music2, Clapperboard, Paperclip } from 'lucide-react';
 
 export interface FlowNodeData {
   textDraft: string;
@@ -20,30 +20,35 @@ export interface FlowNodeData {
     maxLength?: number;
     pattern?: string;
   };
+  statusCategory?: 'to-do' | 'in-progress' | 'done';
 }
 
 export const StartNode: React.FC<{ data: FlowNodeData }> = ({ data }) => (
-  <div className="bg-green-600 text-white p-4 rounded-lg shadow-lg border-2 border-green-700 min-w-[150px]">
-    <Handle type="source" position={Position.Right} className="w-3 h-3 bg-white" />
+  <div className="bg-white text-[#313F4E] p-2 rounded-md shadow border border-[#e2e8f0] min-w-[140px]">
+    <Handle type="source" position={Position.Right} className="w-2 h-2 bg-[#40B1DF]" />
     <div className="text-center">
-      <div className="font-bold text-sm mb-2 inline-flex items-center gap-1"><Rocket className="w-4 h-4" /> Start</div>
-      <div className="text-xs opacity-90">{data.textDraft || 'Training begins here'}</div>
+      <div className="font-semibold text-[11px] mb-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#e6f6fd] text-[#0f3c4c]">
+        <Rocket className="w-3 h-3" /> Start
+      </div>
+      <div className="text-[10px] opacity-90">{data.textDraft || ''}</div>
     </div>
   </div>
 );
 
 export const ContentNode: React.FC<{ data: FlowNodeData }> = ({ data }) => (
-  <div className="bg-blue-500 text-white p-4 rounded-lg shadow-lg border-2 border-blue-600 min-w-[200px]">
-    <Handle type="target" position={Position.Left} className="w-3 h-3 bg-white" />
-    <Handle type="source" position={Position.Right} className="w-3 h-3 bg-white" />
+  <div className="bg-white text-[#313F4E] p-2 rounded-md shadow border border-[#e2e8f0] min-w-[150px]">
+    <Handle type="target" position={Position.Left} className="w-2 h-2 bg-[#40B1DF]" />
+    <Handle type="source" position={Position.Right} className="w-2 h-2 bg-[#40B1DF]" />
     <div className="text-center">
-      <div className="font-bold text-sm mb-2 inline-flex items-center gap-1"><BookOpen className="w-4 h-4" /> Content</div>
-      <div className="text-xs opacity-90 max-h-20 overflow-y-auto">
-        {data.textDraft || 'Add your training content here'}
+      <div className="font-semibold text-[11px] mb-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#e6f6fd] text-[#0f3c4c]">
+        <BookOpen className="w-3 h-3" /> Text
+      </div>
+      <div className="text-[10px] opacity-90 max-h-14 overflow-y-auto">
+        {data.textDraft || ''}
       </div>
       {data.mediaUrl && (
-        <div className="mt-2 text-xs opacity-75">
-          <span className="inline-flex items-center gap-1"><Paperclip className="w-3 h-3" /> Media attached</span>
+        <div className="mt-1 text-[9px] opacity-75">
+          <span className="inline-flex items-center gap-1"><Paperclip className="w-3 h-3" /> media</span>
         </div>
       )}
     </div>
@@ -51,17 +56,19 @@ export const ContentNode: React.FC<{ data: FlowNodeData }> = ({ data }) => (
 );
 
 export const QuestionNode: React.FC<{ data: FlowNodeData }> = ({ data }) => (
-  <div className="bg-purple-600 text-white p-4 rounded-lg shadow-lg border-2 border-purple-700 min-w-[180px]">
-    <Handle type="target" position={Position.Left} className="w-3 h-3 bg-white" />
-    <Handle type="source" position={Position.Right} className="w-3 h-3 bg-white" />
+  <div className="bg-white text-[#313F4E] p-2 rounded-md shadow border border-[#e2e8f0] min-w-[150px]">
+    <Handle type="target" position={Position.Left} className="w-2 h-2 bg-[#40B1DF]" />
+    <Handle type="source" position={Position.Right} className="w-2 h-2 bg-[#40B1DF]" />
     <div className="text-center">
-      <div className="font-bold text-sm mb-2 inline-flex items-center gap-1"><HelpCircle className="w-4 h-4" /> Question</div>
-      <div className="text-xs opacity-90 mb-2">
-        {data.textDraft || 'Ask a question here'}
+      <div className="font-semibold text-[11px] mb-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#eef2ff] text-[#3730a3]">
+        <HelpCircle className="w-3 h-3" /> Question
+      </div>
+      <div className="text-[10px] opacity-90 mb-1">
+        {data.textDraft || ''}
       </div>
       {data.choices && data.choices.length > 0 && (
-        <div className="text-xs opacity-75">
-          {data.choices.length} choices available
+        <div className="text-[9px] opacity-75">
+          {data.choices.length} choices
         </div>
       )}
     </div>
@@ -69,17 +76,19 @@ export const QuestionNode: React.FC<{ data: FlowNodeData }> = ({ data }) => (
 );
 
 export const DecisionNode: React.FC<{ data: FlowNodeData }> = ({ data }) => (
-  <div className="bg-amber-500 text-white p-4 rounded-lg shadow-lg border-2 border-amber-600 min-w-[180px]">
-    <Handle type="target" position={Position.Left} className="w-3 h-3 bg-white" />
-    <Handle type="source" position={Position.Right} className="w-3 h-3 bg-white" />
-    <Handle type="source" position={Position.Bottom} className="w-3 h-3 bg-white" />
+  <div className="bg-white text-[#313F4E] p-2 rounded-md shadow border border-[#e2e8f0] min-w-[150px]">
+    <Handle type="target" position={Position.Left} className="w-2 h-2 bg-[#40B1DF]" />
+    <Handle type="source" position={Position.Right} className="w-2 h-2 bg-[#40B1DF]" />
+    <Handle type="source" position={Position.Bottom} className="w-2 h-2 bg-[#40B1DF]" />
     <div className="text-center">
-      <div className="font-bold text-sm mb-2 inline-flex items-center gap-1"><GitBranch className="w-4 h-4" /> Decision</div>
-      <div className="text-xs opacity-90">
-        {data.textDraft || 'Make a decision here'}
+      <div className="font-semibold text-[11px] mb-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#fef3c7] text-[#92400e]">
+        <GitBranch className="w-3 h-3" /> Decision
+      </div>
+      <div className="text-[10px] opacity-90">
+        {data.textDraft || 'Choose a path'}
       </div>
       {data.conditions && data.conditions.length > 0 && (
-        <div className="text-xs opacity-75 mt-1">
+        <div className="text-[9px] opacity-75 mt-1">
           {data.conditions.length} conditions
         </div>
       )}
@@ -87,44 +96,17 @@ export const DecisionNode: React.FC<{ data: FlowNodeData }> = ({ data }) => (
   </div>
 );
 
-export const FeedbackNode: React.FC<{ data: FlowNodeData }> = ({ data }) => (
-  <div className="bg-indigo-600 text-white p-4 rounded-lg shadow-lg border-2 border-indigo-700 min-w-[180px]">
-    <Handle type="target" position={Position.Left} className="w-3 h-3 bg-white" />
-    <Handle type="source" position={Position.Right} className="w-3 h-3 bg-white" />
-    <div className="text-center">
-      <div className="font-bold text-sm mb-2 inline-flex items-center gap-1"><MessageSquare className="w-4 h-4" /> Feedback</div>
-      <div className="text-xs opacity-90">
-        {data.textDraft || 'Provide feedback here'}
-      </div>
-    </div>
-  </div>
-);
-
-export const AssessmentNode: React.FC<{ data: FlowNodeData }> = ({ data }) => (
-  <div className="bg-red-600 text-white p-4 rounded-lg shadow-lg border-2 border-red-700 min-w-[180px]">
-    <Handle type="target" position={Position.Left} className="w-3 h-3 bg-white" />
-    <Handle type="source" position={Position.Right} className="w-3 h-3 bg-white" />
-    <div className="text-center">
-      <div className="font-bold text-sm mb-2 inline-flex items-center gap-1"><BarChart3 className="w-4 h-4" /> Assessment</div>
-      <div className="text-xs opacity-90">
-        {data.textDraft || 'Assessment content here'}
-      </div>
-      {data.validation && (
-        <div className="text-xs opacity-75 mt-1">
-          {data.validation.required ? 'Required' : 'Optional'}
-        </div>
-      )}
-    </div>
-  </div>
-);
+// Removed Feedback and Assessment nodes to align with Jira-like model
 
 export const CompletionNode: React.FC<{ data: FlowNodeData }> = ({ data }) => (
-  <div className="bg-teal-600 text-white p-4 rounded-lg shadow-lg border-2 border-teal-700 min-w-[150px]">
-    <Handle type="target" position={Position.Left} className="w-3 h-3 bg-white" />
+  <div className="bg-white text-[#313F4E] p-2 rounded-md shadow border border-[#e2e8f0] min-w-[140px]">
+    <Handle type="target" position={Position.Left} className="w-2 h-2 bg-[#40B1DF]" />
     <div className="text-center">
-      <div className="font-bold text-sm mb-2 inline-flex items-center gap-1"><CheckCircle2 className="w-4 h-4" /> Complete</div>
-      <div className="text-xs opacity-90">
-        {data.textDraft || 'Training completed'}
+      <div className="font-semibold text-[11px] mb-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#ecfdf5] text-[#065f46]">
+        <CheckCircle2 className="w-3 h-3" /> Complete
+      </div>
+      <div className="text-[10px] opacity-90">
+        {data.textDraft || 'End'}
       </div>
     </div>
   </div>
@@ -150,17 +132,17 @@ export const MediaNode: React.FC<{ data: FlowNodeData; type: 'image' | 'audio' |
   };
 
   return (
-    <div className="bg-emerald-600 text-white p-4 rounded-lg shadow-lg border-2 border-emerald-700 min-w-[180px]">
-      <Handle type="target" position={Position.Left} className="w-3 h-3 bg-white" />
-      <Handle type="source" position={Position.Right} className="w-3 h-3 bg-white" />
+    <div className="bg-white text-[#313F4E] p-2 rounded-md shadow border border-[#e2e8f0] min-w-[150px]">
+      <Handle type="target" position={Position.Left} className="w-2 h-2 bg-[#40B1DF]" />
+      <Handle type="source" position={Position.Right} className="w-2 h-2 bg-[#40B1DF]" />
       <div className="text-center">
-        <div className="font-bold text-sm mb-2 inline-flex items-center gap-1">{getIcon()} {getTypeLabel()}</div>
-        <div className="text-xs opacity-90">
-          {data.textDraft || `${getTypeLabel()} content`}
+        <div className="font-semibold text-[11px] mb-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#e6f6fd] text-[#0f3c4c]">{getIcon()} {getTypeLabel()}</div>
+        <div className="text-[10px] opacity-90">
+          {data.textDraft || ''}
         </div>
         {data.mediaUrl && (
-          <div className="text-xs opacity-75 mt-1">
-            <span className="inline-flex items-center gap-1"><Paperclip className="w-3 h-3" /> Media attached</span>
+          <div className="text-[9px] opacity-75 mt-1">
+            <span className="inline-flex items-center gap-1"><Paperclip className="w-3 h-3" /> media</span>
           </div>
         )}
       </div>
@@ -176,21 +158,17 @@ export const nodeTypes = {
   video: (props: { data: FlowNodeData }) => <MediaNode {...props} type="video" />,
   question: QuestionNode,
   decision: DecisionNode,
-  feedback: FeedbackNode,
-  assessment: AssessmentNode,
   end: CompletionNode,
   completion: CompletionNode
 };
 
 export const nodeTypeDefinitions = [
-  { type: 'start', label: 'Start', color: 'bg-green-600', description: 'Training begins here' },
-  { type: 'text', label: 'Content', color: 'bg-blue-500', description: 'Add training content' },
-  { type: 'image', label: 'Image', color: 'bg-emerald-600', description: 'Visual content' },
-  { type: 'audio', label: 'Audio', color: 'bg-emerald-600', description: 'Audio content' },
-  { type: 'video', label: 'Video', color: 'bg-emerald-600', description: 'Video content' },
-  { type: 'question', label: 'Question', color: 'bg-purple-600', description: 'Interactive questions' },
-  { type: 'decision', label: 'Decision', color: 'bg-amber-500', description: 'Conditional logic' },
-  { type: 'feedback', label: 'Feedback', color: 'bg-indigo-600', description: 'User feedback' },
-  { type: 'assessment', label: 'Assessment', color: 'bg-red-600', description: 'Knowledge testing' },
-  { type: 'completion', label: 'Complete', color: 'bg-teal-600', description: 'Training ends here' }
+  { type: 'start', label: 'Start', icon: <Rocket className="w-4 h-4" />, color: 'bg-[#40B1DF]', description: 'Entry point' },
+  { type: 'text', label: 'Text', icon: <BookOpen className="w-4 h-4" />, color: 'bg-[#40B1DF]', description: 'Text content' },
+  { type: 'image', label: 'Image', icon: <ImageIcon className="w-4 h-4" />, color: 'bg-[#40B1DF]', description: 'Visual content' },
+  { type: 'audio', label: 'Audio', icon: <Music2 className="w-4 h-4" />, color: 'bg-[#40B1DF]', description: 'Audio content' },
+  { type: 'video', label: 'Video', icon: <Clapperboard className="w-4 h-4" />, color: 'bg-[#40B1DF]', description: 'Video content' },
+  { type: 'question', label: 'Question', icon: <HelpCircle className="w-4 h-4" />, color: 'bg-[#5156D8]', description: 'Interactive questions; supports correctness branching' },
+  { type: 'decision', label: 'Decision', icon: <GitBranch className="w-4 h-4" />, color: 'bg-[#f59e0b]', description: 'Conditional logic (branching incl. correctness)' },
+  { type: 'completion', label: 'Complete', icon: <CheckCircle2 className="w-4 h-4" />, color: 'bg-[#16a34a]', description: 'End' }
 ];

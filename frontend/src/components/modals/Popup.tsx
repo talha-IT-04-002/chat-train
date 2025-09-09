@@ -74,14 +74,14 @@ function Popup({
       <div className={`absolute ${positionClasses[position]} ${sizeClasses[size]} ${className}`}>
         <div
           ref={popupRef}
-          className="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-[#e2e8f0] dark:border-gray-700 transform transition-all duration-200"
+          className="bg-white rounded-lg shadow-lg border border-[#e2e8f0] transform transition-all duration-200"
           role="dialog"
           aria-modal="true"
           aria-labelledby={title ? 'popup-title' : undefined}
         >
           
           {showArrow && position !== 'center' && (
-            <div className={`absolute w-2 h-2 bg-white dark:bg-gray-800 border border-[#e2e8f0] dark:border-gray-700 transform rotate-45 ${
+            <div className={`absolute w-2 h-2 bg-white border border-[#e2e8f0] transform rotate-45 ${
               position === 'top' ? 'top-full -mt-1 left-1/2 -translate-x-1/2 border-t-0 border-l-0' :
               position === 'bottom' ? 'bottom-full -mb-1 left-1/2 -translate-x-1/2 border-b-0 border-r-0' :
               position === 'left' ? 'left-full -ml-1 top-1/2 -translate-y-1/2 border-l-0 border-b-0' :
@@ -91,11 +91,11 @@ function Popup({
 
           
           {(title || showCloseButton) && (
-            <div className="flex items-center justify-between p-4 border-b border-[#e2e8f0] dark:border-gray-700">
+            <div className="flex items-center justify-between p-4 border-b border-[#e2e8f0]">
               {title && (
                 <h3 
                   id="popup-title"
-                  className="text-sm font-semibold text-[#313F4E] dark:text-white font-family: Inter, sans-serif"
+                  className="text-sm font-semibold text-[#313F4E] font-family: Inter, sans-serif"
                 >
                   {title}
                 </h3>

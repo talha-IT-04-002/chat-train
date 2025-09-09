@@ -1,7 +1,7 @@
 {
-  "name": "chat-train",
+  "name": "chattrain",
   "version": "1.0.0",
-  "description": "AI Training Platform - Full Stack Application",
+  "description": "ChatTrain: Propelling Training Forward - The L&D Engine",
   "scripts": {
     "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install",
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",

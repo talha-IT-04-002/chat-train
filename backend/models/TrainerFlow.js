@@ -136,6 +136,11 @@ const TrainerFlowSchema = new mongoose.Schema({
     ref: 'Trainer',
     required: true
   },
+  status: {
+    type: String,
+    enum: ['draft', 'published'],
+    default: 'draft'
+  },
   version: {
     type: String,
     required: true,

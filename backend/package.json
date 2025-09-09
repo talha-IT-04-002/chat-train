@@ -1,7 +1,7 @@
 {
-  "name": "chat-train-backend",
+  "name": "chattrain-backend",
   "version": "1.0.0",
-  "description": "Backend API for Chat Train - AI Training Platform",
+  "description": "Backend API for ChatTrain: Propelling Training Forward - The L&D Engine",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

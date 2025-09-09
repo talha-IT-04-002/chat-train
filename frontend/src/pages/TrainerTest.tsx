@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Layout, Header, Card, Button, Badge, Modal, Dialog, Popup } from '../components'
+import { Layout, Header, Card, Button, Badge, Modal, Dialog, Popup, Input, Select } from '../components'
 import { Play, Settings, BarChart3, CheckCircle, XCircle } from 'lucide-react'
 
 function TrainerTest() {
@@ -69,13 +69,13 @@ function TrainerTest() {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <Card hover={false} className="text-center">
-              <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-r from-[#40B1DF] to-[#3aa0c9] rounded-xl mx-auto mb-4">
+              <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-r from-[#40B1DF] to-[#40B1DF] rounded-xl mx-auto mb-4">
                 <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold text-[#313F4E] font-family: Inter, sans-serif mb-1">8</h3>
-              <p className="text-[#64748b] font-family: Inter, sans-serif">Tests</p>
+              <h3 className="text-2xl font-bold text-[#313F4E] heading-font mb-1">8</h3>
+              <p className="text-[#64748b]">Tests</p>
             </Card>
 
             <Card hover={false} className="text-center">
@@ -84,8 +84,8 @@ function TrainerTest() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold text-[#313F4E] font-family: Inter, sans-serif mb-1">6</h3>
-              <p className="text-[#64748b] font-family: Inter, sans-serif">Passed Tests</p>
+              <h3 className="text-2xl font-bold text-[#313F4E] heading-font mb-1">6</h3>
+              <p className="text-[#64748b]">Passed Tests</p>
             </Card>
 
             <Card hover={false} className="text-center">
@@ -94,15 +94,15 @@ function TrainerTest() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold text-[#313F4E] font-family: Inter, sans-serif mb-1">75%</h3>
-              <p className="text-[#64748b] font-family: Inter, sans-serif">Success Rate</p>
+              <h3 className="text-2xl font-bold text-[#313F4E] heading-font mb-1">75%</h3>
+              <p className="text-[#64748b]">Success Rate</p>
             </Card>
           </div>
 
           
           <Card className="mb-8">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
-              <h2 className="text-xl font-bold text-[#313F4E] font-family: Inter, sans-serif">Tests</h2>
+              <h2 className="text-xl font-bold text-[#313F4E] heading-font">Tests</h2>
               <div className="flex gap-2">
                 <Button 
                   variant="accent" 
@@ -128,10 +128,10 @@ function TrainerTest() {
                 <div key={scenario.id} className="border border-[#e2e8f0] rounded-lg p-6 hover:border-[#cbd5e1] transition-colors duration-200">
                   <div className="flex items-start justify-between mb-4">
                     <div>
-                      <h3 className="font-semibold text-[#313F4E] font-family: Inter, sans-serif mb-2">
+                      <h3 className="font-semibold text-[#313F4E] heading-font mb-2">
                         {scenario.title}
                       </h3>
-                      <p className="text-[#64748b] font-family: Inter, sans-serif text-sm mb-3">
+                      <p className="text-[#64748b] text-sm mb-3">
                         {scenario.description}
                       </p>
                     </div>
@@ -142,12 +142,12 @@ function TrainerTest() {
                   
                   <div className="space-y-2 mb-4">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-[#64748b] font-family: Inter, sans-serif">Expected Flow:</span>
-                      <span className="font-medium text-[#313F4E] font-family: Inter, sans-serif">{scenario.expectedFlow}</span>
+                      <span className="text-[#64748b]">Expected Flow:</span>
+                      <span className="font-medium text-[#313F4E] heading-font">{scenario.expectedFlow}</span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-[#64748b] font-family: Inter, sans-serif">Test Duration:</span>
-                      <span className="font-medium text-[#313F4E] font-family: Inter, sans-serif">{scenario.duration}</span>
+                      <span className="text-[#64748b]">Test Duration:</span>
+                      <span className="font-medium text-[#313F4E] heading-font">{scenario.duration}</span>
                     </div>
                   </div>
                   
@@ -185,29 +185,25 @@ function TrainerTest() {
       >
         <div className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-[#313F4E] font-family: Inter, sans-serif mb-3">
+            <label className="block text-sm font-medium text-[#0B3A6F] mb-3">
               Test Environment
             </label>
-            <select className="w-full px-4 py-3 border border-[#e2e8f0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#40B1DF] focus:border-transparent">
+            <Select>
               <option>Production Environment</option>
               <option>Staging Environment</option>
               <option>Development Environment</option>
-            </select>
+            </Select>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[#313F4E] font-family: Inter, sans-serif mb-3">
+            <label className="block text-sm font-medium text-[#0B3A6F] mb-3">
               Test Timeout (seconds)
             </label>
-            <input
-              type="number"
-              defaultValue={30}
-              className="w-full px-4 py-3 border border-[#e2e8f0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#40B1DF] focus:border-transparent"
-            />
+            <Input type="number" defaultValue={30} />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[#313F4E] font-family: Inter, sans-serif mb-3">
+            <label className="block text-sm font-medium text-[#313F4E] mb-3">
               Response Quality Threshold
             </label>
             <input

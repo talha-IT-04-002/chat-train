@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { ThemeProvider } from './contexts/ThemeContext'
 import { AuthProvider } from './contexts/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import LoginSignup from './pages/LoginSignup'
@@ -10,6 +9,7 @@ import ManageTeam from './pages/ManageTeam'
 import BuildNewTrainer from './pages/BuildNewTrainer'
 import TrainerAIConversation from './pages/TrainerAIConversation'
 import TrainerBuilder from './pages/TrainerBuilder'
+import JiraWorkflowBuilder from './pages/JiraWorkflowBuilder'
 import TrainerManagement from './pages/TrainerManagement'
 import TrainerTest from './pages/TrainerTest'
 import Dashboard from './pages/Dashboard'
@@ -18,7 +18,6 @@ import AcceptInvite from './pages/AcceptInvite'
 
 function App() {
   return (
-    <ThemeProvider>
       <AuthProvider>
         <BrowserRouter>
           <Routes>
@@ -59,6 +58,11 @@ function App() {
                 <TrainerBuilder />
              </ProtectedRoute>
             } />
+            <Route path="/trainers/:trainerId/workflow" element={
+              <ProtectedRoute requireAuth={true} requireEmailVerification={true} requireOrganization={true}>
+                <JiraWorkflowBuilder />
+             </ProtectedRoute>
+            } />
             <Route path="/trainer-management" element={
               <ProtectedRoute requireAuth={true} requireEmailVerification={true} requireOrganization={true}>
                 <TrainerManagement />
@@ -77,7 +81,6 @@ function App() {
           </Routes>
         </BrowserRouter>
       </AuthProvider>
-    </ThemeProvider>
   )
 }
 

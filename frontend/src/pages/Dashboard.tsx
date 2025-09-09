@@ -1,13 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
 import { Layout, Header, Card, Badge, Button, Modal, Dialog } from '../components'
-import { Plus, MoreVertical, Filter, Calendar, Users, BarChart3, Copy, Settings } from 'lucide-react'
+import { Plus, MoreVertical, Filter, Calendar, Users, BarChart3, Trash2, Power, Play } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { useGetTrainers } from '../hooks/useApi'
 import { apiService } from '../services/api'
 function Dashboard() {
   const { currentOrganization, isAuthenticated, isLoading } = useAuth()
   const { data: trainers, loading: trainersLoading, error: trainersError, execute: fetchTrainers } = useGetTrainers()
-  console.log('trainers', trainers);
   const [showCreateTrainer, setShowCreateTrainer] = useState(false)
   const [showStatusFilterModal, setShowStatusFilterModal] = useState(false)
   const [showTypeFilterModal, setShowTypeFilterModal] = useState(false)
@@ -142,20 +141,38 @@ function Dashboard() {
     setShowDeleteDialog(true)
   }
 
-  const confirmDelete = () => {
-    setShowDeleteDialog(false)
-    setSelectedTrainer(null)
+  const confirmDelete = async () => {
+    try {
+      if (selectedTrainer?.id) {
+        await apiService.deleteTrainer(selectedTrainer.id)
+        await fetchTrainers(currentOrganization?.id as unknown as string)
+      }
+    } catch (e) {
+      console.error('Failed to delete trainer', e)
+    } finally {
+      setShowDeleteDialog(false)
+      setSelectedTrainer(null)
+    }
+  }
+
+  const handleToggleStatus = async (trainer?: any) => {
+    const t = trainer || selectedTrainer
+    if (!t?.id) return
+    try {
+      if (t.status === 'active') {
+        await apiService.undeployTrainer(t.id)
+      } else {
+        await apiService.deployTrainer(t.id)
+      }
+      await fetchTrainers(currentOrganization?.id as unknown as string)
+    } catch (e) {
+      console.error('Failed to toggle trainer status', e)
+    }
   }
 
   const handleOptionClick = (action: string) => {
     setShowOptionsPopup(false)
     switch (action) {
-      case 'edit':
-        break
-      case 'duplicate':
-        break
-      case 'analytics':
-        break
       case 'view':
         handleQuickView(selectedTrainer)
         break
@@ -164,6 +181,9 @@ function Dashboard() {
         break
       case 'manage':
         window.location.href = `/trainer-management?trainerId=${selectedTrainer?.id}`
+        break
+      case 'toggle-status':
+        handleToggleStatus()
         break
       case 'delete':
         handleDeleteTrainer()
@@ -206,14 +226,13 @@ function Dashboard() {
     <Layout>
       <Header 
         title="Your AI Trainers" 
-        subtitle="Manage and monitor your conversational learning experiences"
+        subtitle="All aboard! Keep your training on track with ChatTrain's L&D Engine"
         action={{ 
           label: "Build New Trainer", 
           onClick: () => window.location.href = '/build-new-trainer'
         }}
       />
-      <div className="px-8 py-6 bg-white dark:bg-gray-900 border-b border-[#e2e8f0]
-      dark:border-gray-700">
+      <div className="px-8 py-6 bg-white border-b border-[#e2e8f0]">
         <div className="flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-3 rounded-xl border border-[#e2e8f0] bg-white px-4 h-12 w-full md:w-96 shadow-sm focus-within:shadow-md focus-within:border-[#40B1DF] transition-all duration-200">
               <svg className="w-5 h-5 text-[#64748b]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -317,7 +336,7 @@ function Dashboard() {
                   </div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">Loading Your Trainers</h3>
                   <p className="text-gray-600 mb-6">
-                    We're fetching your AI trainers. This should only take a moment...
+                    We're getting your training engine ready. This should only take a moment...
                   </p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -384,12 +403,12 @@ function Dashboard() {
                     </svg>
                   </div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    {statusFilters.length > 0 || typeFilters.length > 0 || searchQuery ? 'No Trainers Match Your Filters' : 'Ready to Create Your First Trainer?'}
+                    {statusFilters.length > 0 || typeFilters.length > 0 || searchQuery ? 'No Trainers Match Your Filters' : 'Ready to Propel Training Forward?'}
                   </h3>
                   <p className="text-gray-600 mb-6">
                     {statusFilters.length > 0 || typeFilters.length > 0 || searchQuery 
                       ? 'Try adjusting your search criteria or filters to see more results.'
-                      : 'Start building conversational AI trainers to enhance your team\'s learning experience.'
+                      : 'All aboard! Start building your first AI trainer to get your team\'s learning journey on track.'
                     }
                   </p>
                 </div>
@@ -444,13 +463,6 @@ function Dashboard() {
                         <Badge variant={getStatusBadgeVariant(trainer.status)}>
                           {trainer.status}
                         </Badge>
-                        {flowsByTrainer[trainer.id] ? (
-                          <Badge variant={flowsByTrainer[trainer.id]?.status === 'published' ? 'primary' : 'accent'}>
-                            {flowsByTrainer[trainer.id]?.status === 'published' ? 'Flow: Published' : 'Flow: Draft'}
-                          </Badge>
-                        ) : (
-                          <Badge variant="gray">Flow: None</Badge>
-                        )}
                       </div>
                     </div>
                     <button onClick={(e?: React.MouseEvent) => handleTrainerOptions(trainer, e)}
@@ -459,17 +471,14 @@ function Dashboard() {
                         border: 'none',
                         padding: '0',
                         margin: '0',
-                        cursor: 'pointer'
+                        cursor: 'pointer',
+                        color: '#334155'
                       }} 
-                      className="text-[#64748b] dark:text-gray-300"
+                      className="hover:text-[#0f172a]"
                       >
                       <MoreVertical className="w-4 h-4" />
                     </button>
                   </div>
-                  
-                  <p className="text-[#64748b] font-family: Inter, sans-serif text-sm mb-6 leading-relaxed">
-                    {trainer.description || 'No description available'}
-                  </p>
                   
                   <div className="grid grid-cols-2 gap-4 mb-6">
                     <div className="text-center p-3 bg-[#f8fafc] rounded-lg">
@@ -486,7 +495,7 @@ function Dashboard() {
                     </div>
                   </div>
                   
-                  <div className="flex items-center justify-between pt-4 border-t border-[#e2e8f0]">
+                  <div className="flex items-end justify-end pt-4 border-t border-[#e2e8f0]">
                     <div className="flex gap-1">
                       <Button variant="accent" size="sm" to={`/trainer-management?trainerId=${trainer.id}`}>
                         <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -496,17 +505,15 @@ function Dashboard() {
                         Manage
                       </Button>
                       <Button variant="accent" size="sm" to={`/trainer-ai-conversation?trainerId=${trainer.id}`}>
-                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
+                        <Play className="w-4 h-4 mr-1" />
                         Test
                       </Button>
-                      <Button variant="accent" size="sm" to={`/trainer-builder?trainerId=${trainer.id}`}>
+                      {/* <Button variant="accent" size="sm" to={`/trainers/${trainer.id}/workflow`}>
                         <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                         </svg>
                         Open Builder
-                      </Button>
+                      </Button> */}
                     </div>
                   </div>
                 </Card>
@@ -518,37 +525,29 @@ function Dashboard() {
 
       {showOptionsPopup && (
         <div 
-          className="fixed bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50 min-w-[160px]"
+          className="fixed bg-white border border-gray-200 rounded-md shadow-lg z-50 min-w-[160px]"
           style={{
             left: `${optionsPosition.x}px`,
             top: `${optionsPosition.y}px`,
-            border: '1px solid #e2e8f0'
+            border: '1px solid #e2e8f0',
           }}
         >
           <div className="py-1">
             <button
-              onClick={() => handleOptionClick('edit')}
-              style={{backgroundColor: 'transparent', border: 'none', cursor: 'pointer', fontWeight:'semibold'}}
-              className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 transition-colors duration-150"
+              onClick={() => handleOptionClick('toggle-status')}
+              style={{backgroundColor: 'transparent', border: 'none', cursor: 'pointer', color:'#0f172a'}}
+              className="w-full flex items-center gap-3 px-3 py-2 text-sm font-semibold text-[#0f172a] hover:text-[#0b1220] transition-colors duration-150"
             >
-              <Settings className="w-4 h-4 text-gray-500" />
-              Edit Trainer
+              <Power className="w-4 h-4 text-gray-500" />
+              {selectedTrainer?.status === 'active' ? 'Deactivate' : 'Activate'}
             </button>
             <button
-              onClick={() => handleOptionClick('duplicate')}
-              style={{backgroundColor: 'transparent', border: 'none', cursor: 'pointer', fontWeight:'semibold'}}
-              className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 transition-colors duration-150"
+              onClick={() => handleOptionClick('delete')}
+              style={{backgroundColor: 'transparent', border: 'none', cursor: 'pointer', color:'#dc2626'}}
+              className="w-full flex items-center gap-3 px-3 py-2 text-sm font-semibold text-red-600 hover:text-red-700 transition-colors duration-150"
             >
-              <Copy className="w-4 h-4 text-gray-500" />
-              Duplicate
-            </button>
-            <button
-              onClick={() => handleOptionClick('analytics')}
-              style={{backgroundColor: 'transparent', border: 'none', cursor: 'pointer', fontWeight:'semibold'}}
-              className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 transition-colors duration-150"
-            >
-              <BarChart3 className="w-4 h-4 text-gray-500" />
-              View Analytics
+              <Trash2 className="w-4 h-4" />
+              Delete
             </button>
           </div>
         </div>
@@ -577,10 +576,6 @@ function Dashboard() {
                 {selectedTrainer.status}
               </Badge>
             </div>
-            
-            <p className="text-[#64748b] font-family: Inter, sans-serif">
-              {selectedTrainer.description || 'No description available'}
-            </p>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="text-center p-4 bg-[#f8fafc] rounded-lg">
@@ -700,7 +695,7 @@ function Dashboard() {
                     checked={statusFilters.includes(status)}
                     onChange={() => handleStatusFilterChange(status)}
                   />
-                  <span className="text-[#313F4E] font-family: Inter, sans-serif">{status}</span>
+                  <span className="text-[#313F4E] font-family: Inter, sans-serif">{status.charAt(0).toUpperCase() + status.slice(1)}</span>
                 </label>
               ))}
             </div>

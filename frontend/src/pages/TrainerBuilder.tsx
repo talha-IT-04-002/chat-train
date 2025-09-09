@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo, useRef, useState, useEffect } from "react";
+import { Input } from "../components";
 import { Link } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { AudioWaveform } from 'lucide-react';
@@ -190,18 +191,16 @@ export default function TrainerBuilder() {
       
       if (data.isValid) {
         setValidationErrors([]);
-        // Show success message
-        alert('✅ Flow validation passed! Your flow is ready to publish.');
+        alert('Flow validation passed! Your flow is ready to publish.');
       } else {
         const errors = Array.isArray(data.errors) ? data.errors : ["Validation failed"];
         setValidationErrors(errors);
-        // Show error message with details
-        alert(`❌ Validation failed:\n\n${errors.join('\n')}`);
+        alert(`Validation failed:\n\n${errors.join('\n')}`);
       }
     } catch (e) {
       const errorMessage = (e as Error)?.message || 'Validation request failed';
       setValidationErrors([errorMessage]);
-      alert(`❌ Validation error: ${errorMessage}`);
+      alert(`Validation error: ${errorMessage}`);
     } finally {
       setIsValidating(false);
     }
@@ -209,11 +208,10 @@ export default function TrainerBuilder() {
 
   const handlePublish = async () => {
     if (!flowId) {
-      alert('❌ Flow not saved yet. Please wait for autosave to create a flow.');
+      alert('Flow not saved yet. Please wait for autosave to create a flow.');
       return;
     }
     
-    // First validate the flow before publishing
     try {
       setIsValidating(true);
       const validationRes = await apiService.validateTrainerFlow({ nodes, edges, settings: {} });
@@ -222,25 +220,23 @@ export default function TrainerBuilder() {
       if (!validationData.isValid) {
         const errors = Array.isArray(validationData.errors) ? validationData.errors : ["Validation failed"];
         setValidationErrors(errors);
-        alert(`❌ Cannot publish: Flow validation failed:\n\n${errors.join('\n')}`);
+        alert(`Cannot publish: Flow validation failed:\n\n${errors.join('\n')}`);
         return;
       }
       
-      // Clear any previous validation errors
       setValidationErrors([]);
       
-      // Proceed with publishing
       const res = await apiService.publishTrainerFlow(flowId);
       if (!(res as any)?.success) {
         throw new Error((res as any)?.message || 'Publish failed');
       }
       
-             alert('🎉 Flow published successfully! Your trainer is now live and ready to use.');
+             alert('Flow published successfully! Your trainer is now live and ready to use.');
        setFlowStatus('published');
       
     } catch (e) {
       const errorMessage = (e as Error)?.message || 'Publish failed';
-      alert(`❌ Publish failed: ${errorMessage}`);
+      alert(`Publish failed: ${errorMessage}`);
     } finally {
       setIsValidating(false);
     }
@@ -693,33 +689,33 @@ export default function TrainerBuilder() {
   }, [connectingFrom, nodes, mousePos]);
 
   return (
-    <div className="h-screen w-full bg-[#f8fafc] dark:bg-gray-900 flex flex-col overflow-hidden">
-        <div className="bg-white dark:bg-gray-900 border-b border-[#e2e8f0] dark:border-gray-700 px-4 md:px-8 py-1 shadow-sm flex-shrink-0">
+    <div className="h-screen w-full bg-[#f8fafc] flex flex-col overflow-hidden">
+        <div className="bg-white border-b border-[#e2e8f0] px-4 md:px-8 py-1 shadow-sm flex-shrink-0">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="flex items-center gap-3 md:gap-4">
             <Link to="/dashboard" className="flex items-center gap-3 group">
-              <img src={logo} alt="Chat Train Logo" className="w-auto" style={{height: '80px'}} />
+              <img src={logo} alt="ChatTrain Logo" className="w-auto" style={{height: '80px'}} />
             </Link>
             <span className="text-[#cbd5e1]">/</span>
             <div className="space-y-1">
               <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-                <h1 className="text-base md:text-xl lg:text-2xl font-bold text-[#313F4E] dark:text-white font-family: Inter, sans-serif tracking-tight">
-                  Track Designer
+                <h1 className="text-base md:text-xl lg:text-2xl font-bold text-[#313F4E] tracking-tight heading-font">
+                  Training Track Designer
                 </h1>
                 <div className="flex items-center gap-2">
                   <span className="text-[#64748b] text-lg hidden sm:inline">•</span>
-                  <input
+                  <Input
                     type="text"
                     value={trainerName}
                     onChange={(e) => setTrainerName(e.target.value)}
-                    className="text-sm md:text-lg font-semibold text-[#313F4E] dark:text-white font-family: Inter, sans-serif bg-transparent border-none outline-none focus:ring-2 focus:ring-[#40B1DF] focus:ring-opacity-50 rounded px-2 py-1 transition-all duration-200 hover:bg-[#f8fafc] dark:hover:bg-gray-800"
+                    className="text-sm md:text-lg font-semibold bg-transparent border-0 focus:ring-2 focus:ring-[#0B3A6F] px-2 py-1"
                     placeholder="Enter trainer name..."
                   />
                   {flowStatus && (
                     <div className={`px-2 py-1 rounded-full text-xs font-medium ${
                       flowStatus === 'published' 
-                        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
-                        : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+                        ? 'bg-green-100 text-green-800' 
+                        : 'bg-yellow-100 text-yellow-800'
                     }`}>
                       {flowStatus === 'published' ? 'Published' : 'Draft'}
                     </div>
@@ -765,7 +761,7 @@ export default function TrainerBuilder() {
           <div className="flex items-center gap-2 md:gap-3 flex-wrap">
             <button
               onClick={downloadJSON}
-              className="flex items-center gap-2 px-3 py-1.5 text-sm bg-white dark:bg-gray-800 border border-[#e2e8f0] dark:border-gray-700 rounded-lg hover:bg-[#f8fafc] dark:hover:bg-gray-700 hover:border-[#40B1DF] transition-colors font-medium text-[#313F4E] dark:text-white"
+              className="flex items-center gap-2 px-3 py-1.5 text-sm bg-white border border-[#e2e8f0] rounded-lg hover:bg-[#f8fafc] hover:border-[#40B1DF] transition-colors font-medium text-[#313F4E]"
               title="Export flow (Ctrl/Cmd + E)"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -773,7 +769,7 @@ export default function TrainerBuilder() {
               </svg>
               <span className="hidden sm:inline">Export</span>
             </button>
-            <label className="flex items-center gap-2 px-3 py-1.5 text-sm bg-white dark:bg-gray-800 border border-[#e2e8f0] dark:border-gray-700 rounded-lg hover:bg-[#f8fafc] dark:hover:bg-gray-700 hover:border-[#40B1DF] transition-colors cursor-pointer font-medium text-[#313F4E] dark:text-white">
+            <label className="flex items-center gap-2 px-3 py-1.5 text-sm bg-white border border-[#e2e8f0] rounded-lg hover:bg-[#f8fafc] hover:border-[#40B1DF] transition-colors cursor-pointer font-medium text-[#313F4E]">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
               </svg>
@@ -787,7 +783,7 @@ export default function TrainerBuilder() {
                 setSelected(null);
                 setConnectingFrom(null);
               }}
-              className="flex items-center gap-2 px-3 py-1.5 text-sm bg-white dark:bg-gray-800 border border-[#e2e8f0] dark:border-gray-700 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 hover:border-red-300 dark:hover:border-red-400 hover:text-red-600 dark:text-white transition-colors font-medium"
+              className="flex items-center gap-2 px-3 py-1.5 text-sm bg-white border border-[#e2e8f0] rounded-lg hover:bg-red-50 hover:border-red-300 hover:text-red-600 transition-colors font-medium"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -796,7 +792,7 @@ export default function TrainerBuilder() {
             </button>
             <button
               onClick={manualSave}
-              className="inline-flex items-center gap-3 rounded-xl bg-gradient-to-r from-[#40B1DF] to-[#3aa0c9] text-white h-10 md:h-12 px-4 md:px-6 text-sm font-family: Inter, sans-serif hover:from-[#3aa0c9] hover:to-[#3590b8] transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 font-medium"
+              className="inline-flex items-center gap-3 rounded-xl bg-gradient-to-r from-[#40B1DF] to-[#40B1DF] text-white h-10 md:h-12 px-4 md:px-6 text-sm hover:from-[#40B1DF]/90 hover:to-[#40B1DF]/80 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 font-medium"
               title="Save flow (Ctrl/Cmd + S)"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -806,7 +802,7 @@ export default function TrainerBuilder() {
             </button>
             <button
               onClick={handleValidate}
-              className="inline-flex items-center gap-3 rounded-xl bg-white dark:bg-gray-800 border border-[#e2e8f0] dark:border-gray-700 text-[#313F4E] dark:text-white h-10 md:h-12 px-4 md:px-6 text-sm hover:bg-[#f8fafc] dark:hover:bg-gray-700 transition-all duration-200 font-medium"
+              className="inline-flex items-center gap-3 rounded-xl bg-white border border-[#e2e8f0] text-[#313F4E] h-10 md:h-12 px-4 md:px-6 text-sm hover:bg-[#f8fafc] transition-all duration-200 font-medium"
               title="Validate flow"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -843,7 +839,7 @@ export default function TrainerBuilder() {
         {!isMobile && !showPalette && (
           <button
             onClick={() => setShowPalette(true)}
-            className="absolute left-2 z-30 flex items-center gap-2 px-3 py-2 text-sm rounded-lg transition-colors font-medium bg-white border border-[#e2e8f0] text-[#313F4E] hover:bg-[#f8fafc] shadow dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700"
+            className="absolute left-2 z-30 flex items-center gap-2 px-3 py-2 text-sm rounded-lg transition-colors font-medium bg-white border border-[#e2e8f0] text-[#313F4E] hover:bg-[#f8fafc] shadow"
             title="Show Node Palette"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -865,15 +861,15 @@ export default function TrainerBuilder() {
           isMobile 
             ? (showPalette ? 'fixed inset-0 z-50 w-full' : 'hidden')
             : (showPalette ? 'w-72' : 'w-0 hidden')
-        } border-r border-[#e2e8f0] dark:border-gray-700 bg-white dark:bg-gray-800 shadow-[inset_-1px_0_0_0_rgba(255,255,255,0.03)] backdrop-blur-sm flex flex-col overflow-hidden`}>
+        } border-r border-[#e2e8f0] bg-white shadow-[inset_-1px_0_0_0_rgba(255,255,255,0.03)] backdrop-blur-sm flex flex-col overflow-hidden`}>
           {isMobile && (
-            <div className="flex items-center justify-between p-4 border-b border-[#e2e8f0] dark:border-gray-700 bg-white dark:bg-gray-800">
-              <h2 className="text-lg font-semibold text-[#313F4E] dark:text-white font-family: Inter, sans-serif">
+            <div className="flex items-center justify-between p-4 border-b border-[#e2e8f0] bg-white">
+              <h2 className="text-lg font-semibold text-[#313F4E] heading-font">
                 Node Palette
               </h2>
               <button
                 onClick={() => setShowPalette(false)}
-                className="p-2 text-[#64748b] dark:text-gray-300 hover:text-[#313F4E] dark:hover:text-white hover:bg-[#f8fafc] dark:hover:bg-gray-700 rounded-lg transition-colors"
+                className="p-2 text-[#64748b] hover:text-[#313F4E] hover:bg-[#f8fafc] rounded-lg transition-colors"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -881,8 +877,8 @@ export default function TrainerBuilder() {
               </button>
             </div>
           )}
-          <div className="p-6 border-b border-[#e2e8f0] dark:border-gray-700 flex-shrink-0 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-[#313F4E] dark:text-white font-family: Inter, sans-serif flex items-center gap-2">
+          <div className="p-6 border-b border-[#e2e8f0] flex-shrink-0 flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-[#313F4E] flex items-center gap-2 heading-font">
               <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
               </svg>
@@ -891,7 +887,7 @@ export default function TrainerBuilder() {
             {!isMobile && (
               <button
                 onClick={() => setShowPalette(false)}
-                className="p-2 inline-flex items-center gap-3 rounded-xl bg-gradient-to-r from-[#40B1DF] to-[#3aa0c9] text-white h-10 md:h-12 px-4 md:px-6 text-sm font-family: Inter, sans-serif hover:from-[#3aa0c9] hover:to-[#3590b8] transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 font-medium"
+                className="p-2 inline-flex items-center gap-3 rounded-xl bg-gradient-to-r from-[#40B1DF] to-[#40B1DF] text-white h-10 md:h-12 px-4 md:px-6 text-sm hover:from-[#40B1DF]/90 hover:to-[#40B1DF]/80 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 font-medium"
                 title="Hide Palette"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -940,7 +936,7 @@ export default function TrainerBuilder() {
                       setShowPalette(false);
                     }
                   } : undefined}
-                  className='inline-flex items-center gap-3 rounded-xl bg-gradient-to-r from-[#40B1DF] to-[#3aa0c9] text-white text-sm font-family: Inter, sans-serif hover:from-[#3aa0c9] hover:to-[#3590b8] transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 font-medium'
+                  className='inline-flex items-center gap-3 rounded-xl bg-gradient-to-r from-[#40B1DF] to-[#40B1DF] text-white text-sm hover:from-[#40B1DF]/90 hover:to-[#40B1DF]/80 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 font-medium'
                   title={isMobile ? "Tap to add to canvas" : "Drag onto the canvas"}
                 >
                   <div className="flex flex-col items-center gap-2">
@@ -951,14 +947,14 @@ export default function TrainerBuilder() {
               ))}
             </div>
 
-            <div className="mt-6 p-4 bg-gradient-to-br from-[#40B1DF]/10 to-[#3aa0c9]/10 dark:from-[#40B1DF]/5 dark:to-[#3aa0c9]/5 dark:bg-gray-800/30 rounded-xl border border-[#40B1DF]/20 dark:border-[#334155]">
-              <h3 className="text-sm font-semibold text-[#313F4E] dark:text-gray-100 font-family: Inter, sans-serif mb-3 flex items-center gap-2">
+            <div className="mt-6 p-4 bg-gradient-to-br from-[#40B1DF]/10 to-[#40B1DF]/0 rounded-xl border border-[#40B1DF]/20">
+              <h3 className="text-sm font-semibold text-[#313F4E] mb-3 flex items-center gap-2 heading-font">
                 <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                 </svg>
                 Quick Tips
               </h3>
-              <div className="space-y-2 text-xs text-[#64748b] dark:text-gray-400 font-family: Inter, sans-serif">
+              <div className="space-y-2 text-xs text-[#64748b]">
                 <div className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 bg-[#40B1DF] rounded-full"></span>
                   <span>Drag nodes onto the canvas</span>
@@ -987,7 +983,7 @@ export default function TrainerBuilder() {
           onTouchMove={onTouchMove}
           onTouchEnd={onTouchEnd}
           onWheel={handleWheel}
-          className={`relative flex-1 overflow-auto bg-white dark:bg-gray-900 bg-[radial-gradient(circle_at_1px_1px,rgba(64,177,223,0.05)_1px,transparent_0)] dark:bg-[radial-gradient(circle_at_1px_1px,rgba(64,177,223,0.04)_1px,transparent_0)] bg-[length:20px_20px] min-h-0 ${
+          className={`relative flex-1 overflow-auto bg-white bg-[radial-gradient(circle_at_1px_1px,rgba(64,177,223,0.05)_1px,transparent_0)] bg-[length:20px_20px] min-h-0 ${
             isMobile && (showPalette || showProperties) ? 'hidden' : ''
           }`}
         >     
@@ -1010,18 +1006,18 @@ export default function TrainerBuilder() {
             </div>
           )}
           {isLoadingFlow ? (
-            <div className="absolute inset-0 flex items-center justify-center bg-[#f8fafc] dark:bg-gray-900">
+            <div className="absolute inset-0 flex items-center justify-center bg-[#f8fafc]">
               <div className="text-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#40B1DF] mx-auto mb-4"></div>
-                <p className="text-[#64748b] dark:text-gray-400 font-family: Inter, sans-serif">Loading flow...</p>
+                <p className="text-[#64748b]">Loading flow...</p>
               </div>
             </div>
           ) : nodes.length === 0 && (
-            <div className="absolute inset-0 flex items-center justify-center bg-[#f8fafc] dark:bg-gray-900">
+            <div className="absolute inset-0 flex items-center justify-center bg-[#f8fafc]">
               <div className="text-center max-w-md p-4 md:p-8">
                 <div className="flex justify-center mb-4 md:mb-6">
                   <div className="relative">
-                    <svg className="w-16 h-16 md:w-24 md:h-24 text-[#64748b] dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-16 h-16 md:w-24 md:h-24 text-[#64748b]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
                     <div className="absolute inset-0 flex justify-center opacity-20">
@@ -1031,20 +1027,20 @@ export default function TrainerBuilder() {
                     </div>
                   </div>
                 </div>
-                <h3 className="text-xl md:text-2xl font-bold text-[#313F4E] dark:text-white font-family: Inter, sans-serif mb-3 md:mb-4">Start Building Your Flow</h3>
-                <p className="text-[#64748b] dark:text-gray-400 font-family: Inter, sans-serif text-base md:text-lg leading-relaxed mb-6 md:mb-8">
+                <h3 className="text-xl md:text-2xl font-bold text-[#313F4E] mb-3 md:mb-4 heading-font">Start Building Your Flow</h3>
+                <p className="text-[#64748b] text-base md:text-lg leading-relaxed mb-6 md:mb-8">
                   {isMobile 
                     ? "Tap the Palette button to add nodes to your canvas"
                     : "Drag nodes from the palette onto the canvas to create your conversational training flow"
                   }
                 </p>
-                <div className="flex items-center justify-center gap-4 md:gap-8 text-xs md:text-sm text-[#64748b] dark:text-gray-400 font-family: Inter, sans-serif flex-wrap">
+                <div className="flex items-center justify-center gap-4 md:gap-8 text-xs md:text-sm text-[#64748b] flex-wrap">
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 bg-[#40B1DF] rounded-full animate-pulse"></span>
                     <span>{isMobile ? "Tap to Add" : "Drag & Drop"}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 bg-[#3aa0c9] rounded-full animate-pulse"></span>
+                    <span className="w-2 h-2 bg-[#40B1DF] rounded-full animate-pulse"></span>
                     <span>Connect Nodes</span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -1053,15 +1049,15 @@ export default function TrainerBuilder() {
                   </div>
                 </div>
                 
-                <div className="mt-6 md:mt-8 p-4 md:p-6 bg-white/50 dark:bg-gray-800/50 rounded-lg border border-[#e2e8f0] dark:border-gray-600 max-w-md mx-auto">
-                  <h4 className="text-sm md:text-base font-semibold text-[#313F4E] dark:text-white mb-3 font-family: Inter, sans-serif">How to Connect Nodes:</h4>
-                  <div className="space-y-2 text-xs md:text-sm text-[#64748b] dark:text-gray-300 font-family: Inter, sans-serif">
+                <div className="mt-6 md:mt-8 p-4 md:p-6 bg-white/50 rounded-lg border border-[#e2e8f0] max-w-md mx-auto">
+                  <h4 className="text-sm md:text-base font-semibold text-[#313F4E] mb-3 heading-font">How to Connect Nodes:</h4>
+                  <div className="space-y-2 text-xs md:text-sm text-[#64748b]">
                     <div className="flex items-start gap-2">
                       <span className="w-1.5 h-1.5 bg-[#40B1DF] rounded-full mt-2 flex-shrink-0"></span>
                       <span><strong>Double-click</strong> any node to start a connection</span>
                     </div>
                     <div className="flex items-start gap-2">
-                      <span className="w-1.5 h-1.5 bg-[#3aa0c9] rounded-full mt-2 flex-shrink-0"></span>
+                      <span className="w-1.5 h-1.5 bg-[#40B1DF] rounded-full mt-2 flex-shrink-0"></span>
                       <span><strong>Click</strong> another node to complete the connection</span>
                     </div>
                     <div className="flex items-start gap-2">
@@ -1117,7 +1113,7 @@ export default function TrainerBuilder() {
               <div className="fixed bottom-6 right-6 z-40">
                 <button
                   onClick={() => setShowPalette(true)}
-                  className="bg-gradient-to-r from-[#40B1DF] to-[#3aa0c9] text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                  className="bg-gradient-to-r from-[#40B1DF] to-[#40B1DF] text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -1173,15 +1169,15 @@ export default function TrainerBuilder() {
               ? 'fixed inset-0 z-50 w-full' 
               : 'hidden'
             : (showProperties && selectedNode ? 'w-[340px]' : 'w-0 hidden')
-        } border-l border-[#e2e8f0] dark:border-gray-700 bg-white dark:bg-gray-800 shadow-[inset_1px_0_0_0_rgba(255,255,255,0.03)] backdrop-blur-sm flex flex-col overflow-hidden`}>
+        } border-l border-[#e2e8f0] bg-white shadow-[inset_1px_0_0_0_rgba(255,255,255,0.03)] backdrop-blur-sm flex flex-col overflow-hidden`}>
           {isMobile && (
-            <div className="flex items-center justify-between p-4 border-b border-[#e2e8f0] dark:border-gray-700 bg-white dark:bg-gray-800/80">
-              <h2 className="text-lg font-semibold text-[#313F4E] dark:text-white font-family: Inter, sans-serif">
+            <div className="flex items-center justify-between p-4 border-b border-[#e2e8f0] bg-white">
+              <h2 className="text-lg font-semibold text-[#313F4E] heading-font">
                 Node Properties
               </h2>
               <button
                 onClick={() => setShowProperties(false)}
-                className="p-2 text-[#64748b] dark:text-gray-300 hover:text-[#313F4E] dark:hover:text-white hover:bg-[#f8fafc] dark:hover:bg-gray-700 rounded-lg transition-colors"
+                className="p-2 text-[#64748b] hover:text-[#313F4E] hover:bg-[#f8fafc] rounded-lg transition-colors"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -1189,8 +1185,8 @@ export default function TrainerBuilder() {
               </button>
             </div>
           )}
-          <div className="p-6 border-b border-[#e2e8f0] dark:border-gray-700 flex-shrink-0 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-[#313F4E] dark:text-white font-family: Inter, sans-serif flex items-center gap-2">
+          <div className="p-6 border-b border-[#e2e8f0] flex-shrink-0 flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-[#313F4E] flex items-center gap-2 heading-font">
               <svg className="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -1200,7 +1196,7 @@ export default function TrainerBuilder() {
             {!isMobile && (
               <button
                 onClick={() => setShowProperties(false)}
-                className="p-2 inline-flex items-center gap-3 rounded-xl bg-gradient-to-r from-[#40B1DF] to-[#3aa0c9] text-white h-10 md:h-12 px-4 md:px-6 text-sm font-family: Inter, sans-serif hover:from-[#3aa0c9] hover:to-[#3590b8] transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 font-medium"
+                className="p-2 inline-flex items-center gap-3 rounded-xl bg-gradient-to-r from-[#40B1DF] to-[#40B1DF] text-white h-10 md:h-12 px-4 md:px-6 text-sm hover:from-[#40B1DF]/90 hover:to-[#40B1DF]/80 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 font-medium"
                 title="Hide Properties"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1210,7 +1206,7 @@ export default function TrainerBuilder() {
             )}
           </div>
           
-          <div className="p-4 md:p-6 flex flex-col gap-6 overflow-y-auto flex-1 bg-[#f8fafc] dark:bg-gray-900 min-h-0">
+          <div className="p-4 md:p-6 flex flex-col gap-6 overflow-y-auto flex-1 bg-[#f8fafc] min-h-0">
           {!selectedNode ? (
             <div className="text-center py-8 md:py-16">
               <div className="relative mb-4 md:mb-6">
@@ -1227,8 +1223,8 @@ export default function TrainerBuilder() {
                   </svg>
                 </div>
               </div>
-              <h3 className="text-lg md:text-xl font-semibold text-[#313F4E] font-family: Inter, sans-serif mb-2 md:mb-3">No Node Selected</h3>
-              <p className="text-[#64748b] font-family: Inter, sans-serif text-sm md:text-base leading-relaxed max-w-sm mx-auto px-4">
+              <h3 className="text-lg md:text-xl font-semibold text-[#313F4E] mb-2 md:mb-3 heading-font">No Node Selected</h3>
+              <p className="text-[#64748b] text-sm md:text-base leading-relaxed max-w-sm mx-auto px-4">
                 {isMobile 
                   ? "Tap on any node in the canvas to configure its properties"
                   : "Click on any node in the canvas to configure its properties, messages, and behavior"
@@ -1287,21 +1283,21 @@ function NodeProperties({ node, onChangeDraft, onRelabel, onDelete, onChangeData
   }, [node.data.messages.length, messageCount]);
 
   return (
-    <div className="space-y-6 font-family: Inter, sans-serif">
+    <div className="space-y-6">
       <div>
-        <label className="block text-sm font-semibold text-[#313F4E] mb-2">Node Label</label>
-        <input
+        <label className="block text-sm font-semibold text-[#0B3A6F] mb-2">Node Label</label>
+        <Input
           type="text"
           value={node.label}
           onChange={(e) => onRelabel(e.target.value)}
-          className="w-full px-4 py-3 border border-[#e2e8f0] rounded-lg focus:ring-2 focus:ring-[#40B1DF] focus:border-transparent transition-all duration-200 text-sm font-family: Inter, sans-serif"
+          className="w-full px-4 py-3 text-sm"
           placeholder="Enter node label..."
         />
       </div>
 
       <div>
         <label className="block text-sm font-semibold text-[#313F4E] mb-2">Node Type</label>
-        <div className="px-4 py-3 bg-[#f8fafc] border border-[#e2e8f0] rounded-lg text-sm text-[#64748b] font-family: Inter, sans-serif">
+        <div className="px-4 py-3 bg-[#f8fafc] border border-[#e2e8f0] rounded-lg text-sm text-[#64748b]">
           {prettyLabelForType(node.type)}
         </div>
       </div>
@@ -1315,7 +1311,7 @@ function NodeProperties({ node, onChangeDraft, onRelabel, onDelete, onChangeData
               onChangeDraft(newMessages.join("\n"));
             }}
             style={{fontSize: '12px'}}
-            className="inline-flex items-center gap-3 rounded-xl bg-gradient-to-r from-[#40B1DF] to-[#3aa0c9] text-white h-10 md:h-12 px-4 md:px-6 text-sm font-family: Inter, sans-serif hover:from-[#3aa0c9] hover:to-[#3590b8] transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 font-medium py-1.5"
+            className="inline-flex items-center gap-3 rounded-xl bg-gradient-to-r from-[#40B1DF] to-[#40B1DF] text-white h-10 md:h-12 px-4 md:px-6 text-sm hover:from-[#40B1DF]/90 hover:to-[#40B1DF]/80 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 font-medium py-1.5"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -1338,7 +1334,7 @@ function NodeProperties({ node, onChangeDraft, onRelabel, onDelete, onChangeData
           )}
           {node.data.messages.map((message, idx) => (
             <div key={idx} className="flex items-center gap-2">
-              <input
+              <Input
                 type="text"
                 value={message}
                 onChange={(e) => {
@@ -1360,7 +1356,7 @@ function NodeProperties({ node, onChangeDraft, onRelabel, onDelete, onChangeData
                   }
                 }}
                 data-index={idx}
-                className="flex-1 px-3 py-2 border border-[#e2e8f0] rounded-lg focus:ring-2 focus:ring-[#40B1DF] focus:border-transparent transition-all duration-200 text-sm font-family: Inter, sans-serif"
+                className="flex-1 px-3 py-2 text-sm"
                 placeholder="Enter message..."
               />
               <button
@@ -1368,7 +1364,7 @@ function NodeProperties({ node, onChangeDraft, onRelabel, onDelete, onChangeData
                   const newMessages = node.data.messages.filter((_, i) => i !== idx);
                   onChangeDraft(newMessages.join("\n"));
                 }}
-                className="p-2 inline-flex items-center gap-3 rounded-xl bg-gradient-to-r from-[#40B1DF] to-[#3aa0c9] text-white h-10 md:h-12 px-4 md:px-6 text-sm font-family: Inter, sans-serif hover:from-[#3aa0c9] hover:to-[#3590b8] transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 font-medium"
+                className="p-2 inline-flex items-center gap-3 rounded-xl bg-gradient-to-r from-[#40B1DF] to-[#40B1DF] text-white h-10 md:h-12 px-4 md:px-6 text-sm hover:from-[#40B1DF]/90 hover:to-[#40B1DF]/80 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 font-medium"
                 title="Remove message"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1385,7 +1381,7 @@ function NodeProperties({ node, onChangeDraft, onRelabel, onDelete, onChangeData
           <label className="block text-sm font-semibold text-[#313F4E] mb-2">Image</label>
           <div className="space-y-3">
             <div className="flex items-center gap-2">
-              <input
+              <Input
                 type="text"
                 value={node.data.messages[0] || ""}
                 onChange={(e) => {
@@ -1393,7 +1389,7 @@ function NodeProperties({ node, onChangeDraft, onRelabel, onDelete, onChangeData
                   newMessages[0] = e.target.value;
                   onChangeDraft(newMessages.join("\n"));
                 }}
-                className="flex-1 px-3 py-2 border border-[#e2e8f0] rounded-lg focus:ring-2 focus:ring-[#40B1DF] focus:border-transparent transition-all duration-200 text-sm font-family: Inter, sans-serif"
+                className="flex-1 px-3 py-2 text-sm"
                 placeholder="Image URL (will be set after upload)"
               />
               <label className="inline-flex items-center gap-2 px-3 py-2 text-sm bg-white border border-[#e2e8f0] rounded-lg hover:bg-[#f8fafc] cursor-pointer">
@@ -1449,7 +1445,7 @@ function NodeProperties({ node, onChangeDraft, onRelabel, onDelete, onChangeData
           <div className="space-y-2">
             {(node.data.choices || []).map((choice, idx) => (
               <div key={idx} className="flex items-center gap-2">
-                <input
+                <Input
                   type="text"
                   value={choice}
                   onChange={(e) => {
@@ -1457,7 +1453,7 @@ function NodeProperties({ node, onChangeDraft, onRelabel, onDelete, onChangeData
                     newChoices[idx] = e.target.value;
                     onChangeData({ choices: newChoices });
                   }}
-                  className="flex-1 px-3 py-2 border border-[#e2e8f0] rounded-lg focus:ring-2 focus:ring-[#40B1DF] focus:border-transparent transition-all duration-200 text-sm font-family: Inter, sans-serif"
+                  className="flex-1 px-3 py-2 text-sm"
                   placeholder={`Choice ${idx + 1}`}
                 />
                 <button
@@ -1490,12 +1486,12 @@ function NodeProperties({ node, onChangeDraft, onRelabel, onDelete, onChangeData
       {node.type === "question" && (
         <div>
           <div>
-            <label className="block text-sm font-semibold text-[#313F4E] mb-1">Error message</label>
-            <input
+            <label className="block text-sm font-semibold text-[#0B3A6F] mb-1">Error message</label>
+            <Input
               type="text"
               value={node.data.errorMessage || "Sorry, I didn't catch that."}
               onChange={(e) => onChangeData({ errorMessage: e.target.value })}
-              className="w-full px-3 py-2 border border-[#e2e8f0] rounded-lg focus:ring-2 focus:ring-[#40B1DF] text-sm"
+              className="w-full px-3 py-2 text-sm"
               placeholder="Shown if user input doesn't match condition"
             />
           </div>
@@ -1508,7 +1504,7 @@ function NodeProperties({ node, onChangeDraft, onRelabel, onDelete, onChangeData
           <div className="space-y-3">
             <div>
               <label className="block text-xs text-[#64748b] mb-1">Correct Answer Feedback</label>
-              <input
+              <Input
                 type="text"
                 value={node.data.messages[0] || "That's correct! Well done."}
                 onChange={(e) => {
@@ -1516,13 +1512,13 @@ function NodeProperties({ node, onChangeDraft, onRelabel, onDelete, onChangeData
                   newMessages[0] = e.target.value;
                   onChangeDraft(newMessages.join("\n"));
                 }}
-                className="w-full px-3 py-2 border border-[#e2e8f0] rounded-lg focus:ring-2 focus:ring-[#40B1DF] text-sm"
+                className="w-full px-3 py-2 text-sm"
                 placeholder="Message shown for correct answers"
               />
             </div>
             <div>
               <label className="block text-xs text-[#64748b] mb-1">Incorrect Answer Feedback</label>
-              <input
+              <Input
                 type="text"
                 value={node.data.messages[1] || "Not quite right. Here's the correct answer..."}
                 onChange={(e) => {
@@ -1530,7 +1526,7 @@ function NodeProperties({ node, onChangeDraft, onRelabel, onDelete, onChangeData
                   newMessages[1] = e.target.value;
                   onChangeDraft(newMessages.join("\n"));
                 }}
-                className="w-full px-3 py-2 border border-[#e2e8f0] rounded-lg focus:ring-2 focus:ring-[#40B1DF] text-sm"
+                className="w-full px-3 py-2 text-sm"
                 placeholder="Message shown for incorrect answers"
               />
             </div>
@@ -1544,30 +1540,30 @@ function NodeProperties({ node, onChangeDraft, onRelabel, onDelete, onChangeData
           <div className="space-y-3">
             <div>
               <label className="block text-xs text-[#64748b] mb-1">Passing Score (%)</label>
-              <input
+              <Input
                 type="number"
                 min="0"
                 max="100"
                 value={node.data.passingScore || 70}
                 onChange={(e) => onChangeData({ passingScore: parseInt(e.target.value) || 70 })}
-                className="w-full px-3 py-2 border border-[#e2e8f0] rounded-lg focus:ring-2 focus:ring-[#40B1DF] text-sm"
+                className="w-full px-3 py-2 text-sm"
                 placeholder="Minimum score to pass"
               />
             </div>
             <div>
               <label className="block text-xs text-[#64748b] mb-1">Time Limit (minutes)</label>
-              <input
+              <Input
                 type="number"
                 min="0"
                 value={node.data.timeLimit || 30}
                 onChange={(e) => onChangeData({ timeLimit: parseInt(e.target.value) || 30 })}
-                className="w-full px-3 py-2 border border-[#e2e8f0] rounded-lg focus:ring-2 focus:ring-[#40B1DF] text-sm"
+                className="w-full px-3 py-2 text-sm"
                 placeholder="Assessment time limit"
               />
             </div>
             <div>
               <label className="block text-xs text-[#64748b] mb-1">Pass Message</label>
-              <input
+              <Input
                 type="text"
                 value={node.data.messages[0] || "Congratulations! You passed the assessment."}
                 onChange={(e) => {
@@ -1575,13 +1571,13 @@ function NodeProperties({ node, onChangeDraft, onRelabel, onDelete, onChangeData
                   newMessages[0] = e.target.value;
                   onChangeDraft(newMessages.join("\n"));
                 }}
-                className="w-full px-3 py-2 border border-[#e2e8f0] rounded-lg focus:ring-2 focus:ring-[#40B1DF] text-sm"
+                className="w-full px-3 py-2 text-sm"
                 placeholder="Message shown when user passes"
               />
             </div>
             <div>
               <label className="block text-xs text-[#64748b] mb-1">Fail Message</label>
-              <input
+              <Input
                 type="text"
                 value={node.data.messages[1] || "You didn't meet the passing score. Please review and try again."}
                 onChange={(e) => {
@@ -1589,7 +1585,7 @@ function NodeProperties({ node, onChangeDraft, onRelabel, onDelete, onChangeData
                   newMessages[1] = e.target.value;
                   onChangeDraft(newMessages.join("\n"));
                 }}
-                className="w-full px-3 py-2 border border-[#e2e8f0] rounded-lg focus:ring-2 focus:ring-[#40B1DF] text-sm"
+                className="w-full px-3 py-2 text-sm"
                 placeholder="Message shown when user fails"
               />
             </div>
@@ -1609,7 +1605,7 @@ function NodeProperties({ node, onChangeDraft, onRelabel, onDelete, onChangeData
                   <div className="text-xs text-[#64748b]">to → <span className="font-medium text-[#313F4E]">{resolveLabel(edge.to)}</span></div>
                   <button
                     onClick={() => onDeleteEdge(edge.id)}
-                    className=" inline-flex items-center gap-3 rounded-xl bg-gradient-to-r from-[#40B1DF] to-[#3aa0c9] text-white h-10 md:h-12 px-4 md:px-6 text-sm font-family: Inter, sans-serif hover:from-[#3aa0c9] hover:to-[#3590b8] 
+                    className=" inline-flex items-center gap-3 rounded-xl bg-gradient-to-r from-[#40B1DF] to-[#40B1DF] text-white h-10 md:h-12 px-4 md:px-6 text-sm hover:from-[#40B1DF]/90 hover:to-[#40B1DF]/80 
                     transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 font-medium
                     hover:text-red-600"
                   >Remove</button>
@@ -1727,13 +1723,13 @@ function NodeProperties({ node, onChangeDraft, onRelabel, onDelete, onChangeData
         </div>
         <div className="bg-white border border-[#e2e8f0] rounded-lg p-4 max-h-48 overflow-y-auto">
           {node.data.messages.length === 0 ? (
-            <p className="text-sm text-[#64748b] italic font-family: Inter, sans-serif">No messages to preview</p>
+            <p className="text-sm text-[#64748b] italic">No messages to preview</p>
           ) : (
             <div className="space-y-2">
               {node.data.messages.map((line, idx) => (
                 <div
                   key={idx}
-                  className={`text-sm px-3 py-2 rounded-2xl transition-all duration-300 font-family: Inter, sans-serif ${
+                  className={`text-sm px-3 py-2 rounded-2xl transition-all duration-300 ${
                     showNewMessageIndicator && idx === node.data.messages.length - 1
                       ? 'bg-[#10b981]/10 border border-[#10b981]/30 animate-pulse'
                       : 'bg-[#f8fafc]'
@@ -1753,7 +1749,7 @@ function NodeProperties({ node, onChangeDraft, onRelabel, onDelete, onChangeData
       <div>
         <label className="block text-sm font-semibold text-[#313F4E] mb-2">Available Variables</label>
         <div className="bg-[#f8fafc] border border-[#e2e8f0] rounded-lg p-4">
-          <p className="text-xs text-[#64748b] mb-3 font-family: Inter, sans-serif">Click to insert into your messages:</p>
+          <p className="text-xs text-[#64748b] mb-3">Click to insert into your messages:</p>
           <div className="grid grid-cols-2 md:grid-cols-2 gap-2">
             {["first_name", "last_name", "email", "company", "role", "department"].map((variable) => (
               <button
@@ -1779,8 +1775,8 @@ function NodeProperties({ node, onChangeDraft, onRelabel, onDelete, onChangeData
                   }
                 }}
                 className="text-xs inline-flex items-center gap-3 rounded-xl bg-gradient-to-r from-[#40B1DF] 
-                to-[#3aa0c9] text-white h-10 md:h-12 px-4 md:px-6 font-family: Inter, sans-serif hover:from-[#3aa0c9] 
-                hover:to-[#3590b8] transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 font-medium"
+                to-[#40B1DF] text-white h-10 md:h-12 px-4 md:px-6 hover:from-[#40B1DF]/90
+                hover:to-[#40B1DF]/80 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 font-medium"
               >
                 {`{${variable}}`}
               </button>
@@ -1792,14 +1788,14 @@ function NodeProperties({ node, onChangeDraft, onRelabel, onDelete, onChangeData
       <div>
         <label className="block text-sm font-semibold text-[#313F4E] mb-2">Type Hints</label>
         <div className="bg-[#f8fafc] border border-[#e2e8f0] rounded-lg p-4">
-          <p className="text-xs text-[#64748b] mb-3 font-family: Inter, sans-serif">This node type supports:</p>
+          <p className="text-xs text-[#64748b] mb-3">This node type supports:</p>
           <div className="space-y-2">
             {getTypeHints(node.type).map((hint: string, idx: number) => (
               <div key={idx} className="flex items-center gap-2">
                 <svg className="w-4 h-4 text-[#40B1DF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span className="text-xs text-[#64748b] font-family: Inter, sans-serif">{hint}</span>
+                <span className="text-xs text-[#64748b]">{hint}</span>
               </div>
             ))}
           </div>
@@ -1809,7 +1805,7 @@ function NodeProperties({ node, onChangeDraft, onRelabel, onDelete, onChangeData
       <div className="flex justify-end">
         <button
           onClick={onDelete}
-          className="inline-flex items-center gap-3 rounded-xl bg-gradient-to-r from-[#40B1DF] to-[#3aa0c9] text-white h-10 md:h-12 px-4 md:px-6 text-sm font-family: Inter, sans-serif hover:from-[#3aa0c9] hover:to-[#3590b8] transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 font-medium py-2"
+          className="inline-flex items-center gap-3 rounded-xl bg-gradient-to-r from-[#40B1DF] to-[#40B1DF] text-white h-10 md:h-12 px-4 md:px-6 text-sm hover:from-[#40B1DF]/90 hover:to-[#40B1DF]/80 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 font-medium py-2"
           title="Delete this node (or press Delete/Backspace)"
         >
           <svg className="w-4 h-4 inline mr-2" fill="none" stroke="white" viewBox="0 0 24 24">

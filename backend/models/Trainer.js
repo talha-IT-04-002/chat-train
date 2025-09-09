@@ -255,13 +255,39 @@ TrainerSchema.methods.undeploy = function() {
   this.status = 'inactive';
 };
 
+// Helper to safely delete from optionally-registered models
+async function deleteIfModelRegistered(doc, modelName, filter) {
+  try {
+    const modelNames = doc.db?.modelNames?.() || [];
+    if (Array.isArray(modelNames) && modelNames.includes(modelName)) {
+      await doc.model(modelName).deleteMany(filter);
+    }
+  } catch (_) {
+    // no-op if model is not registered
+  }
+}
+
 TrainerSchema.pre('remove', async function(next) {
-  await this.model('TrainerFlow').deleteMany({ trainerId: this._id });
-  await this.model('Session').deleteMany({ trainerId: this._id });
-  await this.model('Analytics').deleteMany({ trainerId: this._id });
-  await this.model('TestScenario').deleteMany({ trainerId: this._id });
-  await this.model('Deployment').deleteMany({ trainerId: this._id });
+  await deleteIfModelRegistered(this, 'TrainerFlow', { trainerId: this._id });
+  await deleteIfModelRegistered(this, 'Session', { trainerId: this._id });
+  await deleteIfModelRegistered(this, 'Analytics', { trainerId: this._id });
+  await deleteIfModelRegistered(this, 'TestScenario', { trainerId: this._id });
+  await deleteIfModelRegistered(this, 'Deployment', { trainerId: this._id });
   next();
+});
+
+// Ensure cascading deletes also work when using deleteOne()
+TrainerSchema.pre('deleteOne', { document: true, query: false }, async function(next) {
+  try {
+    await deleteIfModelRegistered(this, 'TrainerFlow', { trainerId: this._id });
+    await deleteIfModelRegistered(this, 'Session', { trainerId: this._id });
+    await deleteIfModelRegistered(this, 'Analytics', { trainerId: this._id });
+    await deleteIfModelRegistered(this, 'TestScenario', { trainerId: this._id });
+    await deleteIfModelRegistered(this, 'Deployment', { trainerId: this._id });
+    next();
+  } catch (err) {
+    next(err);
+  }
 });
 
 module.exports = mongoose.model('Trainer', TrainerSchema);

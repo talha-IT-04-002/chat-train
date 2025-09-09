@@ -63,17 +63,17 @@ function Dialog({
         aria-hidden="true"
       />
         
-      <div className="relative bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md transform transition-all duration-200 border border-light dark:border-gray-700">
+      <div className="relative bg-white rounded-xl shadow-2xl w-full max-w-md transform transition-all duration-200 border border-light">
         <div className="p-6">
           <div className="flex items-start gap-4 mb-4">
             <div className={`flex-shrink-0 w-10 h-10 ${config.bgColor} rounded-full flex items-center justify-center`}>
               <IconComponent className={`w-5 h-5 ${config.iconColor}`} />
             </div>
             <div className="flex-1">
-              <h3 className="text-lg font-bold text-[#313F4E] dark:text-white font-family: Inter, sans-serif mb-2">
+              <h3 className="text-lg font-bold text-[#313F4E] font-family: Inter, sans-serif mb-2">
                 {title}
               </h3>
-              <p className="text-[#64748b] dark:text-gray-300 font-family: Inter, sans-serif text-sm leading-relaxed">
+              <p className="text-[#64748b] font-family: Inter, sans-serif text-sm leading-relaxed">
                 {message}
               </p>
             </div>

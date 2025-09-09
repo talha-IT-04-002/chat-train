@@ -305,7 +305,8 @@ router.delete('/:id', asyncHandler(async (req, res) => {
     });
   }
 
-  await trainer.remove();
+  // Use deleteOne instead of deprecated remove
+  await trainer.deleteOne();
 
   res.json({
     success: true,

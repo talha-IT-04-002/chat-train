@@ -83,18 +83,18 @@ function Drawer({
 
       <div
         ref={drawerRef}
-        className={`absolute ${positionClasses[position]} ${sizeClasses[size]} bg-white dark:bg-gray-800 border border-light dark:border-gray-700 shadow-2xl transition-transform duration-300 ease-in-out ${transformClasses[position]} ${className}`}
+        className={`absolute ${positionClasses[position]} ${sizeClasses[size]} bg-white border border-light shadow-2xl transition-transform duration-300 ease-in-out ${transformClasses[position]} ${className}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby={title ? 'drawer-title' : undefined}
         tabIndex={-1}
       >
         {(title || showCloseButton) && (
-          <div className="flex items-center justify-between p-6 border-b border-[#e2e8f0] dark:border-gray-700">
+          <div className="flex items-center justify-between p-6 border-b border-[#e2e8f0]">
             {title && (
               <h2 
                 id="drawer-title"
-                className="text-xl font-bold text-[#313F4E] dark:text-white font-family: Inter, sans-serif"
+                className="text-xl font-bold text-[#313F4E] font-family: Inter, sans-serif"
               >
                 {title}
               </h2>

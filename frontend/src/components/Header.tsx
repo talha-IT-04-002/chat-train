@@ -50,16 +50,16 @@ function Header({ title, subtitle, action }: HeaderProps) {
       <div
         id="myHeader"
         ref={headerRef}
-        className={`${isFixed ? 'fixed' : ''} bg-white border-b border-[#e2e8f0] dark:border-gray-700 
+        className={`${isFixed ? 'fixed' : ''} bg-white border-b border-[#e2e8f0] 
       px-4 sm:px-8 py-4 sm:py-6 flex flex-col sm:flex-row items-start sm:items-center justify-between 
       gap-3`}
       >
         <div className="space-y-1">
-          <h1 className="text-2xl md:text-3xl font-bold text-[#313F4E] dark:text-white font-family: Inter, sans-serif tracking-tight break-words leading-tight">
+          <h1 className="text-2xl md:text-3xl font-bold text-[#313F4E] tracking-tight break-words leading-tight heading-font">
             {title}
           </h1>
           {subtitle && (
-            <p className="text-[#64748b] dark:text-gray-400 text-sm sm:text-base font-family: Inter, sans-serif">
+            <p className="text-[#64748b] text-sm sm:text-base">
               {subtitle}
             </p>
           )}
@@ -81,7 +81,7 @@ function Header({ title, subtitle, action }: HeaderProps) {
             <Link 
               to={action.to || '#'} 
               style={{color:"white",fontWeight:"bold"}}
-              className="inline-flex items-center gap-3 rounded-xl bg-gradient-to-r from-[#40B1DF] to-[#3aa0c9] text-[#313F4E] dark:text-white h-12 px-6 text-sm font-family: Inter, sans-serif hover:from-[#3aa0c9] hover:to-[#3590b8] hover:text-white transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 w-full sm:w-auto justify-center"
+              className="inline-flex items-center gap-3 rounded-xl bg-gradient-to-r from-[#40B1DF] to-[#40B1DF] text-[#313F4E] h-12 px-6 text-sm hover:from-[#40B1DF]/90 hover:to-[#40B1DF]/80 hover:text-white transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 w-full sm:w-auto justify-center"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />

@@ -132,7 +132,7 @@ function TrainerManagement() {
           }
         } : null)
         setShowDeploymentModal(false)
-        setDeploymentMessage('Trainer deployed successfully! It is now live and available for users.')
+        setDeploymentMessage('Trainer deployed successfully! Your training engine is now on track and ready to propel learning forward.')
         setShowDeploymentSuccess(true)
       } else {
         setDeploymentMessage(response.message || 'Failed to deploy trainer. Please try again.')
@@ -166,7 +166,7 @@ function TrainerManagement() {
               const response = await apiService.undeployTrainer(trainerId)
               if (response.success) {
                 setTrainerData(prev => prev ? { ...prev, status: 'inactive' } : null)
-                setDeploymentMessage('Trainer undeployed successfully. It is no longer available for users.')
+                setDeploymentMessage('Trainer undeployed successfully. Your training engine has been taken off track.')
                 setShowDeploymentSuccess(true)
               } else {
                 setDeploymentMessage(response.message || 'Failed to undeploy trainer. Please try again.')
@@ -190,7 +190,7 @@ function TrainerManagement() {
     <Layout>
       <Header 
         title={trainerData?.name || (isLoadingTrainer ? 'Loading…' : 'Trainer Management')}
-        subtitle={trainerData?.description || (trainerId ? '' : 'Select a trainer from Dashboard → Manage')}
+        subtitle={trainerData?.description || (trainerId ? 'Keep your training on track' : 'Select a trainer from Dashboard → Manage')}
         action={{ 
           label: "Save Changes", 
           onClick: handleSaveChanges
@@ -211,7 +211,7 @@ function TrainerManagement() {
                         onClick={() => setActiveTab(tab.id as TabType)}
                         aria-pressed={activeTab === tab.id}
                         className={`${activeTab === tab.id 
-                          ? 'bg-gradient-to-r from-[#40B1DF] to-[#3aa0c9] text-white shadow-md border-transparent'
+                          ? 'bg-gradient-to-r from-[#40B1DF] to-[#40B1DF] text-white shadow-md border-transparent'
                           : ''} shrink-0 px-3 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#40B1DF] flex items-center gap-2`}
                         style={{backgroundColor: (activeTab!==tab.id ? 'white' : ''),
                           color: (activeTab!==tab.id ? '#64748b' : ''),
@@ -592,7 +592,7 @@ function BuilderTab({ trainerId, flowData, isLoadingFlow }: { trainerId: string;
         <h3 className="text-lg font-bold text-[#313F4E] font-family: Inter, sans-serif">
           Flow Designer
         </h3>
-        <Button variant="primary" size="md" to={`/trainer-builder?trainerId=${trainerId}`}>
+        <Button variant="primary" size="md" to={`/trainers/${trainerId}/workflow`}>
           <Pencil className="w-4 h-4 mr-2" />
           Open Builder
         </Button>
@@ -631,7 +631,7 @@ function BuilderTab({ trainerId, flowData, isLoadingFlow }: { trainerId: string;
         <div className="space-y-4">
           <h4 className="font-semibold text-[#313F4E] font-family: Inter, sans-serif">Quick Actions</h4>
           <div className="space-y-3">
-            <Button variant="accent" size="md" className="w-full justify-start" to={`/trainer-builder?trainerId=${trainerId}`}>
+            <Button variant="accent" size="md" className="w-full justify-start" to={`/trainers/${trainerId}/workflow`}>
               <Plus className="w-4 h-4 mr-2" />
               Add New Node
             </Button>
@@ -693,7 +693,7 @@ function TestTab({ trainerId, trainerData }: { trainerId: string; trainerData: T
           <h4 className="font-semibold text-[#313F4E] font-family: Inter, sans-serif">Quick Test</h4>
           <div className="border border-[#e2e8f0] rounded-lg p-6">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-gradient-to-r from-[#40B1DF] to-[#3aa0c9] rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-r from-[#40B1DF] to-[#40B1DF] rounded-lg flex items-center justify-center">
                 <CheckCircle className="w-5 h-5 text-white" />
               </div>
               <div>
@@ -872,7 +872,7 @@ function DeployTab({
           <h4 className="font-semibold text-[#313F4E] font-family: Inter, sans-serif">Web Embeddable</h4>
           <div className="border border-[#e2e8f0] rounded-lg p-4">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-gradient-to-r from-[#40B1DF] to-[#3aa0c9] rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-r from-[#40B1DF] to-[#40B1DF] rounded-lg flex items-center justify-center">
                 <Globe className="w-5 h-5 text-white" />
               </div>
               <div>
@@ -1062,7 +1062,7 @@ function AnalyticsTab({ analyticsData, isLoadingAnalytics }: { analyticsData: an
                 <div className={`max-w-[70%] ${message.type === 'user' ? 'order-2' : 'order-1'}`}>
                   <div className={`rounded-2xl px-4 py-3 ${
                     message.type === 'user' 
-                      ? 'bg-gradient-to-r from-[#40B1DF] to-[#3aa0c9] text-white' 
+                      ? 'bg-gradient-to-r from-[#40B1DF] to-[#40B1DF] text-white' 
                       : 'bg-[#f8fafc] text-[#313F4E] border border-[#40B1DF]'
                   }`}>
                     <p className="font-family: Inter, sans-serif text-sm leading-relaxed">
@@ -1077,7 +1077,7 @@ function AnalyticsTab({ analyticsData, isLoadingAnalytics }: { analyticsData: an
                 </div>
                 
                 {message.type === 'ai' && (
-                  <div className="w-8 h-8 bg-gradient-to-r from-[#40B1DF] to-[#3aa0c9] rounded-full flex items-center justify-center ml-3 order-2">
+                  <div className="w-8 h-8 bg-gradient-to-r from-[#40B1DF] to-[#40B1DF] rounded-full flex items-center justify-center ml-3 order-2">
                     <Bot className="w-4 h-4 text-white" />
                   </div>
                 )}

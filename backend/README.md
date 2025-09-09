@@ -1,6 +1,6 @@
-# Chat Train Backend API
+# ChatTrain Backend API
 
-A comprehensive MERN stack backend for the Chat Train AI training platform.
+A comprehensive MERN stack backend for ChatTrain: Propelling Training Forward - The L&D Engine.
 
 ## Features
 
@@ -34,7 +34,7 @@ A comprehensive MERN stack backend for the Chat Train AI training platform.
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd chat-train/backend
+   cd chattrain/backend
    ```
 
 2. **Install dependencies**

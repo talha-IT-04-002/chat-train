@@ -138,7 +138,7 @@ function EmailVerification() {
   const statusContent = getStatusContent();
 
   return (
-    <div className="h-screen bg-gradient-to-br from-[#f8fafc] via-white to-[#f1f5f9] dark:from-gray-900 dark:via-gray-900 dark:to-gray-900 flex overflow-hidden" style={{ fontFamily: 'Inter, sans-serif' }}>
+    <div className="h-screen bg-gradient-to-br from-[#f8fafc] via-white to-[#f1f5f9] flex overflow-hidden">
 
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
         
@@ -175,9 +175,9 @@ function EmailVerification() {
         
         <div className="absolute inset-0">
           
-          <div className="absolute top-20 right-20 w-16 h-16 bg-gradient-to-r from-[#40B1DF]/20 to-[#3aa0c9]/20 rounded-full blur-xl animate-pulse"></div>
-          <div className="absolute bottom-32 left-16 w-12 h-12 bg-gradient-to-r from-[#40B1DF]/15 to-[#3aa0c9]/15 rounded-full blur-lg animate-pulse delay-1000"></div>
-          <div className="absolute top-1/2 right-1/3 w-8 h-8 bg-gradient-to-r from-[#40B1DF]/10 to-[#3aa0c9]/10 rounded-full blur-md animate-pulse delay-500"></div>
+          <div className="absolute top-20 right-20 w-16 h-16 bg-gradient-to-r from-[#40B1DF]/20 to-[#40B1DF]/0 rounded-full blur-xl animate-pulse"></div>
+          <div className="absolute bottom-32 left-16 w-12 h-12 bg-gradient-to-r from-[#40B1DF]/15 to-[#40B1DF]/0 rounded-full blur-lg animate-pulse delay-1000"></div>
+          <div className="absolute top-1/2 right-1/3 w-8 h-8 bg-gradient-to-r from-[#40B1DF]/10 to-[#40B1DF]/0 rounded-full blur-md animate-pulse delay-500"></div>
           
           
           <div className="absolute inset-0 opacity-5">
@@ -189,7 +189,7 @@ function EmailVerification() {
           
           
           <div className="absolute top-1/4 left-1/4 w-1 h-1 bg-[#40B1DF]/40 rounded-full animate-bounce"></div>
-          <div className="absolute bottom-1/3 right-1/4 w-1 h-1 bg-[#3aa0c9]/30 rounded-full animate-ping"></div>
+          <div className="absolute bottom-1/3 right-1/4 w-1 h-1 bg-[#40B1DF]/30 rounded-full animate-ping"></div>
           <div className="absolute top-2/3 left-1/3 w-1 h-1 bg-[#40B1DF]/50 rounded-full animate-bounce delay-1000"></div>
           
           
@@ -202,10 +202,10 @@ function EmailVerification() {
             <div className="inline-flex items-center justify-center w-16 h-16 bg-white rounded-2xl shadow-lg mb-4">
               <img src={logo} alt="Chat Train Logo" className="h-10 w-auto" />
             </div>
-            <h1 className="text-2xl font-bold text-[#313F4E] dark:text-white tracking-tight mb-2">
+            <h1 className="text-2xl font-bold text-[#313F4E] tracking-tight mb-2">
               Email Verification
             </h1>
-            <p className="text-[#64748b] dark:text-gray-400 text-sm">
+            <p className="text-[#64748b] text-sm">
               Verify your email to continue
             </p>
           </div>
@@ -217,10 +217,10 @@ function EmailVerification() {
             
             <div className="text-center mb-6">
               {statusContent.icon}
-              <h3 className="text-xl font-semibold text-[#313F4E] dark:text-white mb-2">
+              <h3 className="text-xl font-semibold text-[#313F4E] mb-2">
                 {statusContent.title}
               </h3>
-              <p className="text-[#64748b] dark:text-gray-400 text-sm leading-relaxed">
+              <p className="text-[#64748b] text-sm leading-relaxed">
                 {statusContent.subtitle}
               </p>
             </div>
@@ -242,17 +242,17 @@ function EmailVerification() {
             {message && (
               <div className={`mb-6 p-4 rounded-lg border ${
                 verificationStatus === 'success' 
-                  ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800' 
+                  ? 'bg-green-50 border-green-200' 
                   : verificationStatus === 'error'
-                  ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800'
-                  : 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800'
+                  ? 'bg-red-50 border-red-200'
+                  : 'bg-blue-50 border-blue-200'
               }`}>
                 <p className={`text-sm ${
                   verificationStatus === 'success' 
-                    ? 'text-green-600 dark:text-green-400' 
+                    ? 'text-green-600' 
                     : verificationStatus === 'error'
-                    ? 'text-red-600 dark:text-red-400'
-                    : 'text-blue-600 dark:text-blue-400'
+                    ? 'text-red-600'
+                    : 'text-blue-600'
                 }`}>
                   {message}
                 </p>
@@ -264,19 +264,19 @@ function EmailVerification() {
               <div className="space-y-4 mb-6">
                 <div className="flex items-start space-x-3">
                   <div className="w-2 h-2 bg-[#40B1DF] rounded-full mt-2 flex-shrink-0"></div>
-                  <p className="text-sm text-[#64748b] dark:text-gray-400">
+                  <p className="text-sm text-[#64748b]">
                     Check your email inbox for a message from Chat Train
                   </p>
                 </div>
                 <div className="flex items-start space-x-3">
                   <div className="w-2 h-2 bg-[#40B1DF] rounded-full mt-2 flex-shrink-0"></div>
-                  <p className="text-sm text-[#64748b] dark:text-gray-400">
+                  <p className="text-sm text-[#64748b]">
                     Click the verification link in the email
                   </p>
                 </div>
                 <div className="flex items-start space-x-3">
                   <div className="w-2 h-2 bg-[#40B1DF] rounded-full mt-2 flex-shrink-0"></div>
-                  <p className="text-sm text-[#64748b] dark:text-gray-400">
+                  <p className="text-sm text-[#64748b]">
                     You'll be redirected to complete your account setup
                   </p>
                 </div>
@@ -289,7 +289,7 @@ function EmailVerification() {
               {verificationStatus === 'pending' && !token && (
                 <div className="space-y-3">
                   <div>
-                    <label className="block text-sm font-semibold text-[#313F4E] dark:text-white mb-2">
+                    <label className="block text-sm font-semibold text-[#313F4E] mb-2">
                       Email Address
                     </label>
                     <input
@@ -297,14 +297,14 @@ function EmailVerification() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="Enter your email address"
-                      className="w-full px-4 py-3 border border-[#e2e8f0] dark:border-gray-700 rounded-2xl text-[#313F4E] dark:text-white placeholder-[#64748b] dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#40B1DF] focus:border-transparent transition-all duration-300 bg-white/50 dark:bg-gray-800/70 backdrop-blur-sm"
+                      className="w-full px-4 py-3 border border-[#e2e8f0] rounded-2xl text-[#313F4E] placeholder-[#64748b] focus:outline-none focus:ring-2 focus:ring-[#40B1DF] focus:border-transparent transition-all duration-300 bg-white/50 backdrop-blur-sm"
                     />
                   </div>
                   
                   <button 
                     onClick={handleResendEmail}
                     disabled={resendLoading || !email}
-                    className="w-full flex items-center justify-center px-4 py-3 border border-[#e2e8f0] dark:border-gray-700 rounded-2xl text-[#313F4E] dark:text-white font-medium hover:bg-[#f8fafc] dark:hover:bg-gray-800 transition-all duration-300 transform hover:scale-[1.02] shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                    className="w-full flex items-center justify-center px-4 py-3 border border-[#e2e8f0] rounded-2xl text-[#313F4E] font-medium hover:bg-[#f8fafc] transition-all duration-300 transform hover:scale-[1.02] shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                   >
                     {resendLoading ? (
                       <div className="flex items-center">
@@ -330,7 +330,7 @@ function EmailVerification() {
               {verificationStatus === 'error' && (
                 <button 
                   onClick={() => navigate('/signup')}
-                  className="w-full flex items-center justify-center px-4 py-3 bg-gradient-to-r from-[#40B1DF] to-[#3aa0c9] text-white rounded-2xl font-medium hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02]"
+                  className="w-full flex items-center justify-center px-4 py-3 bg-gradient-to-r from-[#40B1DF] to-[#40B1DF] text-white rounded-2xl font-medium hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02]"
                 >
                   <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
@@ -341,14 +341,14 @@ function EmailVerification() {
             </div>
 
 
-            <div className="mt-6 pt-6 border-t border-[#e2e8f0] dark:border-gray-700">
+            <div className="mt-6 pt-6 border-t border-[#e2e8f0]">
               <div className="text-center">
-                <p className="text-xs text-[#64748b] dark:text-gray-500 mb-3">
+                <p className="text-xs text-[#64748b] mb-3">
                   Didn't receive the email? Check your spam folder or
                 </p>
                 <button 
                   onClick={() => navigate('/signup')}
-                  className="text-sm text-[#40B1DF] hover:text-[#3aa0c9] font-medium transition-colors duration-300 hover:underline"
+                  className="text-sm text-[#40B1DF] hover:text-[#40B1DF]/80 font-medium transition-colors duration-300 hover:underline"
                 >
                   try a different email address
                 </button>
@@ -357,11 +357,11 @@ function EmailVerification() {
 
             
             <div className="text-center mt-6">
-              <p className="text-[#64748b] dark:text-gray-400 text-sm">
+              <p className="text-[#64748b] text-sm">
                 Already verified?{' '}
                 <Link
                   to="/login"
-                  className="text-[#40B1DF] hover:text-[#3aa0c9] font-semibold transition-colors duration-300 hover:underline"
+                  className="text-[#40B1DF] hover:text-[#40B1DF]/80 font-semibold transition-colors duration-300 hover:underline"
                 >
                   Sign in here
                 </Link>
@@ -371,9 +371,9 @@ function EmailVerification() {
 
           
           <div className="text-center mt-4">
-            <p className="text-xs text-[#64748b] dark:text-gray-500">
+            <p className="text-xs text-[#64748b]">
               Need help?{' '}
-              <Link to="#" className="text-[#40B1DF] hover:text-[#3aa0c9] transition-colors duration-300 hover:underline">
+              <Link to="#" className="text-[#40B1DF] hover:text-[#40B1DF]/80 transition-colors duration-300 hover:underline">
                 Contact Support
               </Link>
             </p>

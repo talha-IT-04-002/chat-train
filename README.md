@@ -1,6 +1,6 @@
-# Chat Train - AI Training Platform
+# ChatTrain: Propelling Training Forward
 
-A comprehensive full-stack application for creating, managing, and deploying AI-powered chat trainers. Built with React, Node.js, and MongoDB.
+The L&D Engine - A comprehensive full-stack application for creating, managing, and deploying AI-powered chat trainers that propel training forward. Built with React, Node.js, and MongoDB.
 
 ## 🚀 Features
 
@@ -39,7 +39,7 @@ A comprehensive full-stack application for creating, managing, and deploying AI-
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd chat-train
+   cd chattrain
    ```
 
 2. **Install all dependencies**

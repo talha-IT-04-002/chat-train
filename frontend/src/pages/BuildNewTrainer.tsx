@@ -67,7 +67,7 @@ function BuildNewTrainer() {
       const trainerId = created?.id || created?._id
       setShowCreateDialog(false)
       if (trainerId) {
-        window.location.href = `/trainer-builder?trainerId=${encodeURIComponent(trainerId)}`
+        window.location.href = `/trainers/${encodeURIComponent(trainerId)}/workflow`
       } else {
         setError('Failed to get created trainer id')
       }
@@ -82,7 +82,7 @@ function BuildNewTrainer() {
     <Layout>
       <Header 
         title="Build New Trainer" 
-        subtitle="Create a new AI trainer for your team"
+        subtitle="All aboard! Let's get your training engine on track"
       />
 
       <div className="px-8 py-8">

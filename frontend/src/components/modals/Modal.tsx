@@ -68,7 +68,7 @@ function Modal({
       
       <div
         ref={modalRef}
-        className={`relative bg-white dark:bg-gray-800 border border-light dark:border-gray-700 rounded-xl shadow-2xl w-full ${sizeClasses[size]} ${className} max-h-[90vh] overflow-hidden flex flex-col transform transition-all duration-200 animate-in fade-in-0 zoom-in-95 slide-in-from-bottom-4`}
+        className={`relative bg-white border border-light rounded-xl shadow-2xl w-full ${sizeClasses[size]} ${className} max-h-[90vh] overflow-hidden flex flex-col transform transition-all duration-200 animate-in fade-in-0 zoom-in-95 slide-in-from-bottom-4`}
         role="dialog"
         aria-modal="true"
         aria-labelledby={title ? 'modal-title' : undefined}
@@ -76,11 +76,11 @@ function Modal({
       >
         
         {(title || showCloseButton) && (
-          <div className="flex items-center justify-between p-4 sm:p-6 border-b border-[#e2e8f0] dark:border-gray-700">
+          <div className="flex items-center justify-between p-4 sm:p-6 border-b border-[#e2e8f0]">
             {title && (
               <h2 
                 id="modal-title"
-                className="text-xl font-bold text-[#313F4E] dark:text-white font-family: Inter, sans-serif"
+                className="text-xl font-bold text-[#313F4E] font-family: Inter, sans-serif"
               >
                 {title}
               </h2>

@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import Layout from '../components/Layout'
 import EnhancedFlowEditor, { type EnhancedFlowEditorHandle } from '../components/flow/EnhancedFlowEditor'
 import { apiService } from '../services/api'
-import { useAuth } from '../contexts/AuthContext'
+import { useAuth } from '../contexts/AuthContext';
 
 import type { Node, Edge } from 'reactflow'
 

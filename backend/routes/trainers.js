@@ -368,4 +368,64 @@ router.post('/:id/undeploy', asyncHandler(async (req, res) => {
   });
 }));
 
+// @desc    Recalculate trainer metadata
+// @route   POST /api/trainers/:id/recalculate-metadata
+// @access  Private
+router.post('/:id/recalculate-metadata', asyncHandler(async (req, res) => {
+  const trainer = await Trainer.findById(req.params.id);
+
+  if (!trainer) {
+    return res.status(404).json({
+      success: false,
+      message: 'Trainer not found'
+    });
+  }
+
+  if (!trainer.canBeAccessedBy(req.user.id)) {
+    return res.status(403).json({
+      success: false,
+      message: 'Not authorized to access this trainer'
+    });
+  }
+
+  try {
+    // Recalculate completion rate
+    const completionRate = await Trainer.recalculateCompletionRate(trainer._id);
+    
+    // Recalculate total interactions and sessions from actual session data
+    const Session = require('../models/Session');
+    const totalSessions = await Session.countDocuments({ trainerId: trainer._id });
+    const totalInteractions = await Session.aggregate([
+      { $match: { trainerId: trainer._id } },
+      { $group: { _id: null, total: { $sum: '$analytics.totalInteractions' } } }
+    ]);
+
+    const interactions = totalInteractions.length > 0 ? totalInteractions[0].total : 0;
+
+    // Update trainer metadata
+    trainer.metadata.totalSessions = totalSessions;
+    trainer.metadata.totalInteractions = interactions;
+    trainer.metadata.completionRate = completionRate;
+    trainer.metadata.lastModified = new Date();
+    
+    await trainer.save();
+
+    res.json({
+      success: true,
+      message: 'Trainer metadata recalculated successfully',
+      data: {
+        totalSessions,
+        totalInteractions: interactions,
+        completionRate
+      }
+    });
+  } catch (error) {
+    console.error('Error recalculating trainer metadata:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error recalculating trainer metadata'
+    });
+  }
+}));
+
 module.exports = router;

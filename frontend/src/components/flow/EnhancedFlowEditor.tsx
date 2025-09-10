@@ -36,6 +36,7 @@ interface EnhancedFlowEditorProps {
   initialEdges?: Edge[];
   onSave?: (nodes: Node<ReactFlowNodeData>[], edges: Edge[], name?: string) => void;
   onValidate?: (result: FlowValidationResult) => void;
+  onFlowChange?: (nodes: Node<ReactFlowNodeData>[], edges: Edge[]) => void;
   initialName?: string;
   showTopPanel?: boolean;
   autoSave?: boolean;
@@ -51,15 +52,17 @@ export interface EnhancedFlowEditorHandle {
   save: () => void;
 }
 
-const EnhancedFlowEditor = forwardRef<EnhancedFlowEditorHandle, EnhancedFlowEditorProps & { project: any }>(({
+const EnhancedFlowEditor = forwardRef<EnhancedFlowEditorHandle, EnhancedFlowEditorProps & { project: any; fitViewFn?: (opts?: any) => void }>(({
   initialNodes = [],
   initialEdges = [],
   onSave,
   onValidate,
+  onFlowChange,
   initialName,
   showTopPanel = true,
   autoSave = false,
   project,
+  fitViewFn,
   onNameChange
 }, ref) => {
   const [nodes, setNodes, onNodesChange] = useNodesState<ReactFlowNodeData>(initialNodes);
@@ -82,6 +85,17 @@ const EnhancedFlowEditor = forwardRef<EnhancedFlowEditorHandle, EnhancedFlowEdit
 
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const lastAddedNodeIdRef = useRef<string | null>(null);
+
+  // Ensure nodes have sane, visible positions and aren't stacked at 0,0
+  const normalizeNodePositions = useCallback((nds: Node<ReactFlowNodeData>[]) => {
+    const spacingX = 260;
+    const spacingY = 140;
+    return nds.map((n, i) => {
+      const x = Number.isFinite((n as any)?.position?.x) ? (n as any).position.x : 120 + (i % 3) * spacingX;
+      const y = Number.isFinite((n as any)?.position?.y) ? (n as any).position.y : 160 + Math.floor(i / 3) * spacingY;
+      return { ...n, position: { x, y } } as Node<ReactFlowNodeData>;
+    });
+  }, []);
 
   useEffect(() => {
     if (!selectedNode) return;
@@ -141,6 +155,22 @@ const EnhancedFlowEditor = forwardRef<EnhancedFlowEditorHandle, EnhancedFlowEdit
   useEffect(() => {
     if (onNameChange) onNameChange(flowName);
   }, [flowName, onNameChange]);
+
+  // If nodes are missing positions or overlapping, spread them; then fit to view
+  useEffect(() => {
+    if (nodes.length === 0) return;
+    const keys = nodes.map((n) => `${Math.round(n.position?.x ?? NaN)}_${Math.round(n.position?.y ?? NaN)}`);
+    const hasInvalid = nodes.some((n) => !Number.isFinite(n.position?.x) || !Number.isFinite(n.position?.y));
+    const hasOverlap = new Set(keys).size < nodes.length;
+    if (hasInvalid || hasOverlap) {
+      const normalized = normalizeNodePositions(nodes);
+      setNodes(normalized);
+      requestAnimationFrame(() => fitViewFn?.({ padding: 0.2, duration: 400 }));
+    } else {
+      requestAnimationFrame(() => fitViewFn?.({ padding: 0.2, duration: 400 }));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nodes.length]);
 
   const convertToCustomNodes = useCallback((reactFlowNodes: Node<ReactFlowNodeData>[]) => {
     return reactFlowNodes.map(n => ({
@@ -374,6 +404,13 @@ const EnhancedFlowEditor = forwardRef<EnhancedFlowEditorHandle, EnhancedFlowEdit
     }, 800);
     return () => clearTimeout(handle);
   }, [nodes, edges, flowName, onSave, autoSave]);
+
+  // Call onFlowChange when nodes or edges change
+  useEffect(() => {
+    if (onFlowChange) {
+      onFlowChange(nodes, edges);
+    }
+  }, [nodes, edges, onFlowChange]);
 
   const getFlowStats = useCallback(() => {
     const customNodes = convertToCustomNodes(nodes);
@@ -891,77 +928,7 @@ const EnhancedFlowEditor = forwardRef<EnhancedFlowEditorHandle, EnhancedFlowEdit
                 </select>
               </div>
             )}
-
-            <div>
-              <div className="flex items-center justify-between">
-                <label className="block text-sm font-medium text-gray-700">Advanced</label>
-                <Button size="sm" variant="accent" onClick={() => setShowAdvancedEdgeOptions(v => !v)}>
-                  {showAdvancedEdgeOptions ? 'Hide' : 'Show'} JSON
-                </Button>
-              </div>
-              {showAdvancedEdgeOptions && (
-                <div className="mt-3 space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Conditions (JSON)</label>
-                    <textarea
-                      rows={3}
-                      value={JSON.stringify(((selectedEdge as any).data?.conditions || []))}
-                      onChange={(e) => {
-                        try {
-                          const parsed = JSON.parse(e.target.value || '[]')
-                          updateEdgeData(selectedEdge.id, { conditions: parsed })
-                        } catch {}
-                      }}
-                      className="w-full p-2 border border-gray-300 rounded-md"
-                      placeholder='[ { "type": "permission", "value": "canTransition" } ]'
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Validators (JSON)</label>
-                      <textarea
-                        rows={3}
-                        value={JSON.stringify(((selectedEdge as any).data?.validators || []))}
-                        onChange={(e) => { try { updateEdgeData(selectedEdge.id, { validators: JSON.parse(e.target.value || '[]') }) } catch {} }}
-                        className="w-full p-2 border border-gray-300 rounded-md"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Post Functions (JSON)</label>
-                      <textarea
-                        rows={3}
-                        value={JSON.stringify(((selectedEdge as any).data?.postFunctions || []))}
-                        onChange={(e) => { try { updateEdgeData(selectedEdge.id, { postFunctions: JSON.parse(e.target.value || '[]') }) } catch {} }}
-                        className="w-full p-2 border border-gray-300 rounded-md"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Triggers (JSON)</label>
-                      <textarea
-                        rows={3}
-                        value={JSON.stringify(((selectedEdge as any).data?.triggers || []))}
-                        onChange={(e) => { try { updateEdgeData(selectedEdge.id, { triggers: JSON.parse(e.target.value || '[]') }) } catch {} }}
-                        className="w-full p-2 border border-gray-300 rounded-md"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Properties (JSON)</label>
-                      <textarea
-                        rows={3}
-                        value={JSON.stringify(((selectedEdge as any).data?.properties || {}))}
-                        onChange={(e) => { try { updateEdgeData(selectedEdge.id, { properties: JSON.parse(e.target.value || '{}') }) } catch {} }}
-                        className="w-full p-2 border border-gray-300 rounded-md"
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
+            
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Resolution (optional)</label>
               <input
@@ -1109,8 +1076,8 @@ const EnhancedFlowEditor = forwardRef<EnhancedFlowEditorHandle, EnhancedFlowEdit
 });
 
 const EnhancedFlowEditorInner = forwardRef<EnhancedFlowEditorHandle, EnhancedFlowEditorProps>((props, ref) => {
-  const { project } = useReactFlow();
-  return <EnhancedFlowEditor {...props} project={project} ref={ref} />;
+  const { project, fitView } = useReactFlow();
+  return <EnhancedFlowEditor {...props} project={project} fitViewFn={fitView as any} ref={ref} />;
 });
 
 const EnhancedFlowEditorWrapper = forwardRef<EnhancedFlowEditorHandle, EnhancedFlowEditorProps>((props, ref) => (

@@ -231,12 +231,24 @@ TrainerSchema.methods.updateMetadata = function(sessionData) {
     this.metadata.avgSessionTime = ((currentAvg * (totalSessions - 1)) + sessionData.duration) / totalSessions;
   }
   
-  if (sessionData.completed) {
-    const completedSessions = this.metadata.totalSessions;
-    this.metadata.completionRate = (completedSessions / this.metadata.totalSessions) * 100;
-  }
-  
   this.metadata.lastModified = new Date();
+};
+
+// Static method to recalculate completion rate for a trainer
+TrainerSchema.statics.recalculateCompletionRate = async function(trainerId) {
+  const Session = require('./Session');
+  const totalSessions = await Session.countDocuments({ trainerId });
+  const completedSessions = await Session.countDocuments({ trainerId, status: 'completed' });
+  
+  if (totalSessions > 0) {
+    const completionRate = Math.round((completedSessions / totalSessions) * 100);
+    await this.findByIdAndUpdate(trainerId, {
+      'metadata.completionRate': completionRate,
+      'metadata.lastModified': new Date()
+    });
+    return completionRate;
+  }
+  return 0;
 };
 
 TrainerSchema.methods.deploy = function(userId, environment = 'production') {

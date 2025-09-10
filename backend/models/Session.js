@@ -262,6 +262,33 @@ SessionSchema.pre('save', function(next) {
   next();
 });
 
+// Post-save hook to update trainer metadata when session status changes
+SessionSchema.post('save', async function(doc) {
+  // Only update trainer metadata if this is a status change to completed or abandoned
+  if (doc.isModified('status') && (doc.status === 'completed' || doc.status === 'abandoned')) {
+    try {
+      const Trainer = require('./Trainer');
+      const trainer = await Trainer.findById(doc.trainerId);
+      
+      if (trainer) {
+        const sessionData = {
+          interactions: doc.analytics.totalInteractions,
+          duration: doc.duration,
+          completed: doc.status === 'completed'
+        };
+        
+        trainer.updateMetadata(sessionData);
+        await trainer.save();
+        
+        // Recalculate completion rate after updating metadata
+        await Trainer.recalculateCompletionRate(doc.trainerId);
+      }
+    } catch (error) {
+      console.error('Error updating trainer metadata:', error);
+    }
+  }
+});
+
 SessionSchema.methods.addUserResponse = function(response) {
   this.userResponses.push(response);
   this.progress.attempts += 1;

@@ -237,7 +237,10 @@ const EnhancedFlowEditor = forwardRef<EnhancedFlowEditorHandle, EnhancedFlowEdit
     });
 
     setEdges((prevEdges) => {
-      const fromId = lastAddedNodeIdRef.current;
+      // If there is exactly one node present and the last-added reference isn't set,
+      // auto-connect from that single existing node.
+      const singleExistingNodeId = (nodes.length === 1) ? nodes[0].id : null;
+      const fromId = lastAddedNodeIdRef.current || singleExistingNodeId;
       if (!fromId) {
         lastAddedNodeIdRef.current = newNodeId;
         return prevEdges;

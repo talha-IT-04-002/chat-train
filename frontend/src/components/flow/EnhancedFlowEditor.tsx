@@ -602,30 +602,35 @@ const EnhancedFlowEditor = forwardRef<EnhancedFlowEditorHandle, EnhancedFlowEdit
         )}
 
         {showMobilePalette && (
-          <Panel position="bottom-center" className="bg-white rounded-lg shadow-lg p-4 m-4 block sm:hidden">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="font-semibold text-gray-700">Add Nodes</h3>
-              <Button size="sm" variant="accent" onClick={() => setShowMobilePalette(false)}>Close</Button>
+          <>
+            <div className="fixed inset-0 bg-black/30 z-40 sm:hidden" onClick={() => setShowMobilePalette(false)} />
+            <div className="fixed inset-x-0 bottom-0 z-50 sm:hidden">
+              <div className="bg-white rounded-t-2xl shadow-2xl p-4 max-h-[65vh] overflow-y-auto">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-semibold text-gray-700">Add Nodes</h3>
+                  <Button size="sm" variant="accent" onClick={() => setShowMobilePalette(false)}>Close</Button>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  {nodeTypeDefinitions.map((nodeType) => (
+                    <button
+                      key={nodeType.type}
+                      onClick={() => {
+                        const container = reactFlowWrapper.current;
+                        const rect = container?.getBoundingClientRect();
+                        const pos = project({ x: (rect?.width || 0) / 2, y: (rect?.height || 0) / 2 });
+                        addNode(nodeType.type, pos);
+                        setShowMobilePalette(false);
+                      }}
+                      className={`${nodeType.color} text-white p-2 rounded text-center text-xs`}
+                      title={nodeType.description}
+                    >
+                      {nodeType.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
-            <div className="grid grid-cols-2 gap-2">
-              {nodeTypeDefinitions.map((nodeType) => (
-                <button
-                  key={nodeType.type}
-                  onClick={() => {
-                    const container = reactFlowWrapper.current;
-                    const rect = container?.getBoundingClientRect();
-                    const pos = project({ x: (rect?.width || 0) / 2, y: (rect?.height || 0) / 2 });
-                    addNode(nodeType.type, pos);
-                    setShowMobilePalette(false);
-                  }}
-                  className={`${nodeType.color} text-white p-2 rounded text-center text-xs`}
-                  title={nodeType.description}
-                >
-                  {nodeType.label}
-                </button>
-              ))}
-            </div>
-          </Panel>
+          </>
         )}
 
         <Panel position="bottom-left" className="bg-white rounded-lg shadow-lg p-4 m-4">

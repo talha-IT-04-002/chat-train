@@ -53,7 +53,7 @@ function Layout({ children }: LayoutProps) {
           )}
         </button>
 
-        <div className="lg:hidden fixed top-4 left-4 z-50">
+        <div className="lg:hidden fixed top-4 left-4 z-50 mt-2">
           <button
             onClick={toggleMobileMenu}
             className="p-3 rounded-xl bg-gradient-to-r from-[#40B1DF] to-[#40B1DF] 
@@ -313,7 +313,7 @@ function Layout({ children }: LayoutProps) {
         </aside>
         <main className="flex-1 overflow-hidden lg:ml-0">
           <TopHeader />
-          <div className="h-full overflow-y-auto pt-16 lg:pt-0">
+          <div className="h-full overflow-y-auto pt-0 lg:pt-0">
             {children}
           </div>
         </main>

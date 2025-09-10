@@ -15,6 +15,7 @@ import TrainerTest from './pages/TrainerTest'
 import Dashboard from './pages/Dashboard'
 import Settings from './pages/Settings'
 import AcceptInvite from './pages/AcceptInvite'
+import UserProfilePage from './pages/UserProfile'
 
 function App() {
   return (
@@ -31,6 +32,11 @@ function App() {
             <Route path="/dashboard" element={
               <ProtectedRoute requireAuth={true} requireEmailVerification={true}>
                 <Dashboard />
+             </ProtectedRoute>
+            } />
+            <Route path="/profile" element={
+              <ProtectedRoute requireAuth={true} requireEmailVerification={true}>
+                <UserProfilePage />
              </ProtectedRoute>
             } />
             <Route path="/manage-key" element={

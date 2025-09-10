@@ -400,8 +400,8 @@ router.post('/reset-password', [
 router.put('/preferences', protect, [
   body('theme')
     .optional()
-    .isIn(['light', 'dark'])
-    .withMessage('Theme must be either light or dark'),
+    .isIn(['light', 'dark', 'system'])
+    .withMessage('Theme must be either light, dark, or system'),
   body('notifications')
     .optional()
     .isBoolean()

@@ -198,31 +198,57 @@ function TrainerManagement() {
       />
 
       <div className="flex-1 overflow-hidden">
-        <div className="h-full px-4 sm:px-8 py-6 sm:py-8">
+        <div className="h-full px-1 sm:px-8 py-6 sm:py-8">
           <div className="max-w-7xl mx-auto h-full flex flex-col">
             <Card className="flex-1 flex flex-col overflow-hidden">
-              <div className="p-4 sm:p-6 flex flex-col h-full">
+              <div className="px-2 sm:px-6 py-4 sm:py-6 flex flex-col h-full">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6 flex-shrink-0">
-                  <div className="w-full sm:w-auto overflow-x-auto -mx-2 sm:mx-0 px-2 sm:px-0">
+                  {/* Mobile: compact grid tabs */}
+                  <div className="w-full sm:hidden">
+                    <div className="grid grid-cols-2 gap-2">
+                      {tabs.map((tab) => (
+                        <button
+                          key={tab.id}
+                          onClick={() => setActiveTab(tab.id as TabType)}
+                          aria-pressed={activeTab === tab.id}
+                          className={`${activeTab === tab.id 
+                            ? 'bg-gradient-to-r from-[#40B1DF] to-[#40B1DF] text-white shadow-md border-transparent'
+                            : ''} w-full px-3 py-3 rounded-md text-xs font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#40B1DF] flex items-center justify-center gap-2`}
+                          style={{backgroundColor: (activeTab!==tab.id ? 'white' : ''),
+                            color: (activeTab!==tab.id ? '#64748b' : ''),
+                            border: (activeTab!==tab.id ? '1px solid skyblue' : ''),
+                            fontWeight: (activeTab!==tab.id ? 'normal' : '')
+                          }}
+                        >
+                          {/* Hide icon on very small screens to save space */}
+                          <span className="hidden xs:inline-block">{tab.icon}</span>
+                          <span className="truncate">{tab.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Desktop: keep existing horizontal pill tabs */}
+                  <div className="hidden sm:block w-full sm:w-auto overflow-x-auto -mx-2 sm:mx-0 px-2 sm:px-0">
                     <div className="flex gap-2 items-center bg-[#f8fafc] border border-[#e2e8f0] rounded-lg p-1 whitespace-nowrap">
-                    {tabs.map((tab) => (
-                      <button
-                        key={tab.id}
-                        onClick={() => setActiveTab(tab.id as TabType)}
-                        aria-pressed={activeTab === tab.id}
-                        className={`${activeTab === tab.id 
-                          ? 'bg-gradient-to-r from-[#40B1DF] to-[#40B1DF] text-white shadow-md border-transparent'
-                          : ''} shrink-0 px-3 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#40B1DF] flex items-center gap-2`}
-                        style={{backgroundColor: (activeTab!==tab.id ? 'white' : ''),
-                          color: (activeTab!==tab.id ? '#64748b' : ''),
-                          border: (activeTab!==tab.id ? '1px solid skyblue' : ''),
-                          fontWeight: (activeTab!==tab.id ? 'normal' : '')
-                        }}
-                      >
-                        {tab.icon}
-                        {tab.label}
-                      </button>
-                    ))}
+                      {tabs.map((tab) => (
+                        <button
+                          key={tab.id}
+                          onClick={() => setActiveTab(tab.id as TabType)}
+                          aria-pressed={activeTab === tab.id}
+                          className={`${activeTab === tab.id 
+                            ? 'bg-gradient-to-r from-[#40B1DF] to-[#40B1DF] text-white shadow-md border-transparent'
+                            : ''} shrink-0 px-3 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#40B1DF] flex items-center gap-2`}
+                          style={{backgroundColor: (activeTab!==tab.id ? 'white' : ''),
+                            color: (activeTab!==tab.id ? '#64748b' : ''),
+                            border: (activeTab!==tab.id ? '1px solid skyblue' : ''),
+                            fontWeight: (activeTab!==tab.id ? 'normal' : '')
+                          }}
+                        >
+                          {tab.icon}
+                          {tab.label}
+                        </button>
+                      ))}
                     </div>
                   </div>
                 </div>

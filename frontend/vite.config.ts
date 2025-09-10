@@ -130,7 +130,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     server: {
-      allowedHosts: ['481b84bc4d35.ngrok-free.app'],
+      allowedHosts: true,
       port: 3000,
       ...(useMocks
         ? {}

@@ -20,7 +20,6 @@ export default function JiraWorkflowBuilder() {
   const editorRef = useRef<EnhancedFlowEditorHandle | null>(null)
   const [flowName, setFlowName] = useState<string>('Untitled Flow')
   
-  // State for tracking unsaved changes and user feedback
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [showUnsavedDialog, setShowUnsavedDialog] = useState(false)
@@ -75,7 +74,6 @@ export default function JiraWorkflowBuilder() {
     return () => { cancelled = true }
   }, [trainerId])
 
-  // Use custom hook for unsaved changes detection
   const { handleNavigation } = useUnsavedChanges({
     hasUnsavedChanges,
     onShowDialog: (pendingNav) => {
@@ -84,9 +82,7 @@ export default function JiraWorkflowBuilder() {
     }
   })
 
-  // Handle flow changes to track unsaved state
   const handleFlowChange = useCallback((nodes: Node[], edges: Edge[]) => {
-    // Compare with initial state to determine if there are changes
     const hasChanges = JSON.stringify(nodes) !== JSON.stringify(initialNodes) ||
                       JSON.stringify(edges) !== JSON.stringify(initialEdges)
     setHasUnsavedChanges(hasChanges)
@@ -136,7 +132,6 @@ export default function JiraWorkflowBuilder() {
         setSaveMessage('Your workflow has been created and saved successfully!')
       }
       
-      // Mark as saved and update initial state
       setHasUnsavedChanges(false)
       setInitialNodes(nodes)
       setInitialEdges(edges)
@@ -152,7 +147,6 @@ export default function JiraWorkflowBuilder() {
     }
   }, [trainerId, flowId, trainerName])
 
-  // Dialog handlers
   const handleConfirmLeave = useCallback(() => {
     setShowUnsavedDialog(false)
     setHasUnsavedChanges(false)
@@ -170,10 +164,8 @@ export default function JiraWorkflowBuilder() {
 
   const handleSaveAndContinue = useCallback(async () => {
     setShowUnsavedDialog(false)
-    // Save the current flow first
     if (editorRef.current) {
       await editorRef.current.save()
-      // After successful save, proceed with navigation
       if (pendingNavigation) {
         handleNavigation(pendingNavigation)
       }
@@ -194,9 +186,9 @@ export default function JiraWorkflowBuilder() {
   return (
     <Layout>
       <div className="p-6">
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-semibold text-gray-800">Training Track Designer</h1>
+            <h1 className="text-2xl font-semibold text-gray-800">Track Designer</h1>
             {hasUnsavedChanges && (
               <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-medium border border-amber-200">
                 <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
@@ -204,7 +196,7 @@ export default function JiraWorkflowBuilder() {
               </span>
             )}
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 w-full sm:w-auto justify-start sm:justify-end">
             <button
               onClick={() => editorRef.current?.save()}
               disabled={isSaving}
@@ -275,7 +267,6 @@ export default function JiraWorkflowBuilder() {
         </div>
       </div>
 
-      {/* Unsaved Changes Dialog */}
       {showUnsavedDialog && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-200" />
@@ -330,7 +321,6 @@ export default function JiraWorkflowBuilder() {
         </div>
       )}
 
-      {/* Success Dialog */}
       <Dialog
         isOpen={showSuccessDialog}
         onClose={handleCloseSuccessDialog}
@@ -341,7 +331,6 @@ export default function JiraWorkflowBuilder() {
         variant="success"
       />
 
-      {/* Error Dialog */}
       <Dialog
         isOpen={showErrorDialog}
         onClose={handleCloseErrorDialog}

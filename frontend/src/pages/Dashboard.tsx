@@ -124,10 +124,26 @@ function Dashboard() {
     setSelectedTrainer(trainer)
     if (event) {
       const rect = event.currentTarget.getBoundingClientRect()
-      setOptionsPosition({
-        x: rect.left,
-        y: rect.bottom + 5
-      })
+      const viewportPadding = 8
+      const estimatedPopupWidth = 160 // keep in sync with min-w-[160px]
+      const estimatedPopupHeight = 88 // approx height for two options
+
+      // Base position under the trigger
+      let x = rect.left
+      let y = rect.bottom + 5
+
+      // Clamp horizontally within viewport
+      const maxX = window.innerWidth - estimatedPopupWidth - viewportPadding
+      if (x > maxX) x = Math.max(viewportPadding, maxX)
+      if (x < viewportPadding) x = viewportPadding
+
+      // If not enough space below, flip above the trigger
+      const maxY = window.innerHeight - estimatedPopupHeight - viewportPadding
+      if (y > maxY) {
+        y = Math.max(viewportPadding, rect.top - estimatedPopupHeight - 5)
+      }
+
+      setOptionsPosition({ x, y })
     }
     setShowOptionsPopup(true)
   }
@@ -232,52 +248,9 @@ function Dashboard() {
           onClick: () => window.location.href = '/build-new-trainer'
         }}
       />
-      <div className="px-8 py-6 bg-white border-b border-[#e2e8f0]">
-        <div className="flex flex-wrap items-center gap-4">
-            <div className="flex items-center gap-3 rounded-xl border border-[#e2e8f0] bg-white px-4 h-12 w-full md:w-96 shadow-sm focus-within:shadow-md focus-within:border-[#40B1DF] transition-all duration-200">
-              <svg className="w-5 h-5 text-[#64748b]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              <input 
-                className="flex-1 outline-none text-sm font-family: Inter, sans-serif placeholder-[#64748b]" 
-                placeholder="Search trainers..."
-                style={{border:'none'}}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-            <Button 
-              variant="accent" 
-              size="md"
-              onClick={() => setShowStatusFilterModal(true)}
-            >
-              <Filter className="w-4 h-4 mr-2" />
-              Filter by status
-            </Button>
-            <Button 
-              variant="accent" 
-              size="md"
-              onClick={() => setShowTypeFilterModal(true)}
-            >
-              <Calendar className="w-4 h-4 mr-2" />
-              Filter by type
-            </Button>
-            {(statusFilters.length > 0 || typeFilters.length > 0) && (
-              <Button 
-                variant="error" 
-                size="md"
-                onClick={() => {
-                  setStatusFilters([])
-                  setTypeFilters([])
-                }}
-              >
-                Clear All Filters
-              </Button>
-            )}
-          </div>
-      </div>
+      
 
-      <div className="px-8 py-8">
+      <div className="px-4 md:px-8 py-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {[
             {label:'Total Trainers',value:dashboardStats.totalTrainers.toString(),icon:<Plus />,trend:'+12%'},
@@ -297,6 +270,54 @@ function Dashboard() {
               <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-[#40B1DF]/10 to-transparent rounded-full -translate-y-10 translate-x-10"></div>
             </Card>
           ))}
+        </div>
+
+        <div className="px-4 md:px-8 py-6 bg-white border-b border-[#e2e8f0] -mx-4 md:-mx-8 mb-8">
+          <div className="flex flex-wrap items-center gap-4">
+              <div className="flex items-center gap-3 rounded-xl border border-[#e2e8f0] bg-white px-4 h-12 w-full md:w-96 shadow-sm focus-within:shadow-md focus-within:border-[#40B1DF] transition-all duration-200">
+                <svg className="w-5 h-5 text-[#64748b]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input 
+                  className="flex-1 outline-none text-sm font-family: Inter, sans-serif placeholder-[#64748b]" 
+                  placeholder="Search trainers..."
+                  style={{border:'none'}}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+              <Button 
+                variant="accent" 
+                size="md"
+                onClick={() => setShowStatusFilterModal(true)}
+                className="w-full md:w-auto"
+              >
+                <Filter className="w-4 h-4 mr-2" />
+                Filter by status
+              </Button>
+              <Button 
+                variant="accent" 
+                size="md"
+                onClick={() => setShowTypeFilterModal(true)}
+                className="w-full md:w-auto"
+              >
+                <Calendar className="w-4 h-4 mr-2" />
+                Filter by type
+              </Button>
+              {(statusFilters.length > 0 || typeFilters.length > 0) && (
+                <Button 
+                  variant="error" 
+                  size="md"
+                  onClick={() => {
+                    setStatusFilters([])
+                    setTypeFilters([])
+                  }}
+                  className="w-full md:w-auto"
+                >
+                  Clear All Filters
+                </Button>
+              )}
+            </div>
         </div>
 
         <div>

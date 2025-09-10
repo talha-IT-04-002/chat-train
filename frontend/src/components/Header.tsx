@@ -14,6 +14,9 @@ function Header({ title, subtitle, action }: HeaderProps) {
   const headerRef = useRef<HTMLDivElement | null>(null)
   const [isFixed, setIsFixed] = useState(false)
   const [headerHeight, setHeaderHeight] = useState(0)
+  const [isDesktop, setIsDesktop] = useState(() =>
+    typeof window !== 'undefined' ? window.matchMedia('(min-width: 1024px)').matches : false
+  )
 
   useEffect(() => {
     const el = headerRef.current
@@ -26,24 +29,45 @@ function Header({ title, subtitle, action }: HeaderProps) {
     const onScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
-          setIsFixed(window.scrollY > 0)
+          // Only fix the header on desktop viewports
+          setIsFixed(isDesktop && window.scrollY > 0)
           ticking = false
         })
         ticking = true
       }
     }
 
-    const onResize = () => updateHeight()
+    const mq = window.matchMedia('(min-width: 1024px)')
+    const handleMediaChange = (e: MediaQueryListEvent | MediaQueryList) => {
+      const matches = 'matches' in e ? e.matches : (e as MediaQueryList).matches
+      setIsDesktop(matches)
+      // Re-evaluate fixed state when breakpoint changes
+      setIsFixed(matches && window.scrollY > 0)
+      updateHeight()
+    }
+
+    const onResize = () => handleMediaChange(mq)
 
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('resize', onResize)
+    // Listen to media query changes (better than resize for breakpoint intent)
+    if (typeof mq.addEventListener === 'function') {
+      mq.addEventListener('change', handleMediaChange as (e: MediaQueryListEvent) => void)
+    } else if (typeof (mq as any).addListener === 'function') {
+      ;(mq as any).addListener(handleMediaChange)
+    }
     onScroll()
 
     return () => {
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onResize)
+      if (typeof mq.removeEventListener === 'function') {
+        mq.removeEventListener('change', handleMediaChange as (e: MediaQueryListEvent) => void)
+      } else if (typeof (mq as any).removeListener === 'function') {
+        ;(mq as any).removeListener(handleMediaChange)
+      }
     }
-  }, [])
+  }, [isDesktop])
 
   return (
     <>

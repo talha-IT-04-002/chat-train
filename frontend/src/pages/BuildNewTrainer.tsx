@@ -85,7 +85,7 @@ function BuildNewTrainer() {
         subtitle="All aboard! Let's get your training engine on track"
       />
 
-      <div className="px-8 py-8">
+      <div className="px-4 sm:px-8 py-8">
         <div className="max-w-4xl mx-auto">
           
           <Card className="mb-8">
@@ -151,22 +151,22 @@ function BuildNewTrainer() {
           )}
           
           
-          <div className="flex items-center justify-between">
-            <Button variant="accent" size="lg" to="/dashboard">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-0 sm:justify-between">
+            <Button variant="accent" size="lg" to="/dashboard" className="w-full sm:w-auto">
               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
               Cancel
             </Button>
             
-            <div className="flex gap-3">
-              <Button variant="accent" size="lg" onClick={handleSaveDraft}>
+            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+              <Button variant="accent" size="lg" onClick={handleSaveDraft} className="w-full sm:w-auto">
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
                 </svg>
                 Save Draft
               </Button>
-              <Button variant="primary" size="lg" onClick={handleCreateTrainer}>
+              <Button variant="primary" size="lg" onClick={handleCreateTrainer} className="w-full sm:w-auto">
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>

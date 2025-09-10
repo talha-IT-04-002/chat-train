@@ -19,10 +19,11 @@ export interface User {
   email: string;
   firstName: string;
   lastName: string;
+  avatar?: string;
   role: string;
   status: string;
   emailVerified: boolean;
-  preferences?: any;
+  preferences?: { theme?: 'light' | 'dark' | 'system'; notifications?: boolean; language?: string };
   profile?: any;
 }
 
@@ -94,8 +95,83 @@ class ApiService {
     this.loadToken();
   }
 
+  // Public helpers for consumers
+  public getBaseUrl(): string {
+    return this.baseURL;
+  }
+
+  public getApiRoot(): string {
+    return this.baseURL.replace(/\/?api$/i, '');
+  }
+
+  public buildPublicUrl(pathOrUrl: string | undefined | null): string {
+    if (!pathOrUrl) return '';
+    if (/^https?:\/\//i.test(pathOrUrl)) return pathOrUrl;
+    const root = this.getApiRoot().replace(/\/$/, '');
+    const path = String(pathOrUrl).startsWith('/') ? String(pathOrUrl) : `/${String(pathOrUrl)}`;
+    return `${root}${path}`;
+  }
+
   private loadToken(): void {
     this.token = localStorage.getItem('authToken');
+  }
+
+  // ===== User Profile =====
+  public async getMyProfile(): Promise<ApiResponse<User>> {
+    return this.request<User>('/users/me/profile');
+  }
+
+  public async updateMyProfile(updates: Partial<User> & { profile?: any }): Promise<ApiResponse<User>> {
+    return this.request<User>('/users/me/profile', {
+      method: 'PUT',
+      body: JSON.stringify(updates),
+    });
+  }
+
+  public async changeMyPassword(currentPassword: string, newPassword: string): Promise<ApiResponse> {
+    return this.request('/users/me/password', {
+      method: 'PUT',
+      body: JSON.stringify({ currentPassword, newPassword }),
+    });
+  }
+
+  public async uploadAvatar(file: File): Promise<ApiResponse<{ avatar: string }>> {
+    const url = `${this.baseURL}/users/me/avatar`;
+    const form = new FormData();
+    form.append('avatar', file);
+    const headers: Record<string, string> = { 'ngrok-skip-browser-warning': 'true' };
+    if (this.token) headers.Authorization = `Bearer ${this.token}`;
+    // Basic retry for transient tunnel/network errors
+    let lastError: any = null;
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        const response = await fetch(url, { method: 'POST', headers, body: form });
+        const data = await response.json();
+        if (!response.ok) {
+          // Retry on typical transient statuses
+          if ([502, 503, 504].includes(response.status) && attempt < 1) {
+            await new Promise(r => setTimeout(r, 600));
+            continue;
+          }
+          throw new Error(data?.message || `Avatar upload failed (${response.status})`);
+        }
+        return data;
+      } catch (err) {
+        lastError = err;
+        if (attempt < 1) {
+          await new Promise(r => setTimeout(r, 600));
+          continue;
+        }
+      }
+    }
+    throw lastError || new Error('Avatar upload failed');
+  }
+
+  public async updatePreferences(preferences: Partial<{ theme: 'light' | 'dark' | 'system'; notifications: boolean; language: string; }>): Promise<ApiResponse<{ preferences: any }>> {
+    return this.request<{ preferences: any }>('/auth/preferences', {
+      method: 'PUT',
+      body: JSON.stringify(preferences),
+    });
   }
 
   public setToken(token: string): void {
@@ -121,6 +197,7 @@ class ApiService {
     const config: RequestInit = {
       headers: {
         'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true',
         ...options.headers,
       },
       ...options,
@@ -185,6 +262,7 @@ class ApiService {
     const endpoint = '/content/upload';
     const url = `${this.baseURL}${endpoint}`;
     const headers: Record<string, string> = {};
+    headers['ngrok-skip-browser-warning'] = 'true';
     if (this.token) headers.Authorization = `Bearer ${this.token}`;
 
     try {
@@ -452,6 +530,7 @@ class ApiService {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          'ngrok-skip-browser-warning': 'true',
         },
       });
       

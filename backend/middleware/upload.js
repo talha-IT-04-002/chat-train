@@ -2,12 +2,10 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-// Configure storage
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadDir = path.join(__dirname, '../uploads/training-materials');
     
-    // Create directory if it doesn't exist
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });
     }
@@ -15,7 +13,6 @@ const storage = multer.diskStorage({
     cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
-    // Generate unique filename with timestamp
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
     const ext = path.extname(file.originalname);
     const name = path.basename(file.originalname, ext);
@@ -23,7 +20,6 @@ const storage = multer.diskStorage({
   }
 });
 
-// File filter for allowed file types
 const fileFilter = (req, file, cb) => {
   const allowedTypes = [
     'application/pdf',
@@ -33,7 +29,13 @@ const fileFilter = (req, file, cb) => {
     'text/csv',
     'application/json',
     'image/jpeg',
+    'image/jpg',
+    'image/jfif',
     'image/png',
+    'image/webp',
+    'image/avif',
+    'image/heic',
+    'image/heif',
     'image/gif',
     'audio/mpeg',
     'audio/wav',
@@ -48,17 +50,15 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-// Configure multer
 const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
   limits: {
-    fileSize: 50 * 1024 * 1024, // 50MB limit
-    files: 10 // Maximum 10 files per upload
+    fileSize: 50 * 1024 * 1024,
+    files: 10
   }
 });
 
-// Error handling middleware
 const handleUploadError = (error, req, res, next) => {
   if (error instanceof multer.MulterError) {
     if (error.code === 'LIMIT_FILE_SIZE') {
@@ -88,10 +88,8 @@ const handleUploadError = (error, req, res, next) => {
 module.exports = {
   upload,
   handleUploadError,
-  // Single file upload
   single: (fieldName) => upload.single(fieldName),
-  // Multiple files upload
+  single: (fieldName) => upload.single(fieldName),
   array: (fieldName, maxCount) => upload.array(fieldName, maxCount),
-  // Multiple fields with different file counts
   fields: (fields) => upload.fields(fields)
 };

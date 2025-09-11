@@ -136,7 +136,6 @@ const ContentUpload: React.FC<ContentUploadProps> = ({
         const result = await response.json();
 
         if (result.success) {
-          // Find the uploaded file info
           const uploadedFile = result.data.files.find(
             (f: any) => f.originalName === fileData.originalName
           );
@@ -215,7 +214,6 @@ const ContentUpload: React.FC<ContentUploadProps> = ({
         size="lg"
       >
         <div className="space-y-6">
-          {/* Upload Area */}
           <div
             className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
               dragActive 
@@ -251,7 +249,6 @@ const ContentUpload: React.FC<ContentUploadProps> = ({
             />
           </div>
 
-          {/* Supported File Types */}
           <div className="bg-gray-50 rounded-lg p-4">
             <h4 className="font-medium text-gray-700 mb-2">Supported File Types:</h4>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-sm text-gray-600">
@@ -269,7 +266,6 @@ const ContentUpload: React.FC<ContentUploadProps> = ({
             </p>
           </div>
 
-          {/* Uploaded Files List */}
           {uploadedFiles.length > 0 && (
             <div className="space-y-3">
               <h4 className="font-medium text-gray-700">Uploaded Files:</h4>
@@ -326,7 +322,6 @@ const ContentUpload: React.FC<ContentUploadProps> = ({
             </div>
           )}
 
-          {/* Actions */}
           <div className="flex justify-between items-center pt-4 border-t">
             <div className="text-sm text-gray-600">
               {successfulUploads} of {totalUploads} files uploaded successfully
@@ -354,7 +349,6 @@ const ContentUpload: React.FC<ContentUploadProps> = ({
         </div>
       </Modal>
 
-      {/* File Preview Modal */}
       <Modal
         isOpen={showPreviewModal}
         onClose={() => setShowPreviewModal(false)}
@@ -363,7 +357,6 @@ const ContentUpload: React.FC<ContentUploadProps> = ({
       >
         {selectedFile && (
           <div className="space-y-4">
-            {/* File Info */}
             <div className="bg-gray-50 rounded-lg p-4">
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
@@ -385,7 +378,6 @@ const ContentUpload: React.FC<ContentUploadProps> = ({
               </div>
             </div>
 
-            {/* Extracted Content */}
             {selectedFile.extractedText && (
               <div>
                 <h4 className="font-medium text-gray-700 mb-2">Extracted Content:</h4>
@@ -397,7 +389,6 @@ const ContentUpload: React.FC<ContentUploadProps> = ({
               </div>
             )}
 
-            {/* Content Suggestions */}
             {selectedFile.suggestions && selectedFile.suggestions.length > 0 && (
               <div>
                 <h4 className="font-medium text-gray-700 mb-2">AI Suggestions:</h4>
@@ -413,7 +404,6 @@ const ContentUpload: React.FC<ContentUploadProps> = ({
               </div>
             )}
 
-            {/* Metadata */}
             {selectedFile.metadata && (
               <div>
                 <h4 className="font-medium text-gray-700 mb-2">File Metadata:</h4>

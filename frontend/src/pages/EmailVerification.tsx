@@ -17,14 +17,12 @@ function EmailVerification() {
   const emailFromQuery = searchParams.get('email');
 
   useEffect(() => {
-    // If there's a token in the URL, verify it automatically
     if (token) {
       verifyEmail(token);
     }
   }, [token]);
 
   useEffect(() => {
-    // Prefill email from navigation state or query param if available
     const emailFromState = (location.state as { email?: string } | null)?.email;
     if (emailFromState) {
       setEmail(emailFromState);
@@ -49,7 +47,6 @@ function EmailVerification() {
         setVerificationStatus('success');
         setMessage('Email verified successfully! You can now log in to your account.');
         
-        // Redirect to login after 3 seconds
         setTimeout(() => {
           navigate('/login');
         }, 3000);
@@ -225,7 +222,6 @@ function EmailVerification() {
               </p>
             </div>
 
-            {/* Loading State */}
             {isLoading && (
               <div className="text-center mb-6">
                 <div className="inline-flex items-center justify-center">
@@ -238,7 +234,6 @@ function EmailVerification() {
               </div>
             )}
 
-            {/* Message Display */}
             {message && (
               <div className={`mb-6 p-4 rounded-lg border ${
                 verificationStatus === 'success' 
@@ -259,7 +254,6 @@ function EmailVerification() {
               </div>
             )}
 
-            {/* Instructions for pending verification */}
             {verificationStatus === 'pending' && !token && (
               <div className="space-y-4 mb-6">
                 <div className="flex items-start space-x-3">
@@ -285,7 +279,6 @@ function EmailVerification() {
 
             
             <div className="space-y-3">
-              {/* Resend Email Form */}
               {verificationStatus === 'pending' && !token && (
                 <div className="space-y-3">
                   <div>
@@ -326,7 +319,6 @@ function EmailVerification() {
                 </div>
               )}
 
-              {/* Manual Verification Button */}
               {verificationStatus === 'error' && (
                 <button 
                   onClick={() => navigate('/signup')}

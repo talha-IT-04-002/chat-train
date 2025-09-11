@@ -34,8 +34,7 @@ function Layout({ children }: LayoutProps) {
   return (
     <div className="min-h-screen bg-surface-gray text-accent transition-colors 
       duration-200">
-      <div className="flex">  
-        {/* Global floating sidebar toggle (desktop) */}
+      <div className="flex">
         <button
           onClick={() => setSidebarCollapsed((v) => !v)}
           className="hidden lg:flex fixed left-6 top-6 z-50 p-3 rounded-full shadow-lg bg-gradient-to-r from-[#40B1DF] to-[#40B1DF] text-white hover:shadow-xl"

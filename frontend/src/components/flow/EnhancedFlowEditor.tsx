@@ -77,7 +77,6 @@ const EnhancedFlowEditor = forwardRef<EnhancedFlowEditorHandle, EnhancedFlowEdit
   const [isValidating, setIsValidating] = useState(false);
   const [selectedEdge, setSelectedEdge] = useState<Edge | null>(null);
   const [showEdgeProperties, setShowEdgeProperties] = useState(false);
-  const [showAdvancedEdgeOptions, setShowAdvancedEdgeOptions] = useState(false);
   const [showMobilePalette, setShowMobilePalette] = useState(false);
   const [showDesktopPalette, setShowDesktopPalette] = useState(true);
   const [showNewMessageIndicator, setShowNewMessageIndicator] = useState(false);
@@ -86,7 +85,6 @@ const EnhancedFlowEditor = forwardRef<EnhancedFlowEditorHandle, EnhancedFlowEdit
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const lastAddedNodeIdRef = useRef<string | null>(null);
 
-  // Ensure nodes have sane, visible positions and aren't stacked at 0,0
   const normalizeNodePositions = useCallback((nds: Node<ReactFlowNodeData>[]) => {
     const spacingX = 260;
     const spacingY = 140;
@@ -156,7 +154,6 @@ const EnhancedFlowEditor = forwardRef<EnhancedFlowEditorHandle, EnhancedFlowEdit
     if (onNameChange) onNameChange(flowName);
   }, [flowName, onNameChange]);
 
-  // If nodes are missing positions or overlapping, spread them; then fit to view
   useEffect(() => {
     if (nodes.length === 0) return;
     const keys = nodes.map((n) => `${Math.round(n.position?.x ?? NaN)}_${Math.round(n.position?.y ?? NaN)}`);
@@ -169,7 +166,6 @@ const EnhancedFlowEditor = forwardRef<EnhancedFlowEditorHandle, EnhancedFlowEdit
     } else {
       requestAnimationFrame(() => fitViewFn?.({ padding: 0.2, duration: 400 }));
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nodes.length]);
 
   const convertToCustomNodes = useCallback((reactFlowNodes: Node<ReactFlowNodeData>[]) => {
@@ -267,8 +263,6 @@ const EnhancedFlowEditor = forwardRef<EnhancedFlowEditorHandle, EnhancedFlowEdit
     });
 
     setEdges((prevEdges) => {
-      // If there is exactly one node present and the last-added reference isn't set,
-      // auto-connect from that single existing node.
       const singleExistingNodeId = (nodes.length === 1) ? nodes[0].id : null;
       const fromId = lastAddedNodeIdRef.current || singleExistingNodeId;
       if (!fromId) {
@@ -405,7 +399,6 @@ const EnhancedFlowEditor = forwardRef<EnhancedFlowEditorHandle, EnhancedFlowEdit
     return () => clearTimeout(handle);
   }, [nodes, edges, flowName, onSave, autoSave]);
 
-  // Call onFlowChange when nodes or edges change
   useEffect(() => {
     if (onFlowChange) {
       onFlowChange(nodes, edges);

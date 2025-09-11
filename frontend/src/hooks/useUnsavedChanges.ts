@@ -11,7 +11,6 @@ export function useUnsavedChanges({ hasUnsavedChanges, onShowDialog }: UseUnsave
   const location = useLocation()
   const prevLocationRef = useRef(location.pathname)
 
-  // Handle browser navigation (back/forward buttons, page refresh)
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (hasUnsavedChanges) {
@@ -25,7 +24,6 @@ export function useUnsavedChanges({ hasUnsavedChanges, onShowDialog }: UseUnsave
       if (hasUnsavedChanges) {
         e.preventDefault()
         onShowDialog('back')
-        // Push the current state back to prevent navigation
         window.history.pushState(null, '', window.location.href)
       }
     }
@@ -33,7 +31,6 @@ export function useUnsavedChanges({ hasUnsavedChanges, onShowDialog }: UseUnsave
     window.addEventListener('beforeunload', handleBeforeUnload)
     window.addEventListener('popstate', handlePopState)
     
-    // Push initial state to enable popstate detection
     window.history.pushState(null, '', window.location.href)
 
     return () => {
@@ -42,7 +39,6 @@ export function useUnsavedChanges({ hasUnsavedChanges, onShowDialog }: UseUnsave
     }
   }, [hasUnsavedChanges, onShowDialog])
 
-  // Handle link clicks
   useEffect(() => {
     const handleLinkClick = (e: MouseEvent) => {
       if (!hasUnsavedChanges) return
@@ -60,11 +56,9 @@ export function useUnsavedChanges({ hasUnsavedChanges, onShowDialog }: UseUnsave
     return () => document.removeEventListener('click', handleLinkClick, true)
   }, [hasUnsavedChanges, onShowDialog])
 
-  // Handle React Router navigation
   useEffect(() => {
     if (hasUnsavedChanges && location.pathname !== prevLocationRef.current) {
       onShowDialog(location.pathname)
-      // Navigate back to prevent the change
       navigate(prevLocationRef.current, { replace: true })
     }
     prevLocationRef.current = location.pathname

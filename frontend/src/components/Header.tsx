@@ -29,7 +29,6 @@ function Header({ title, subtitle, action }: HeaderProps) {
     const onScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
-          // Only fix the header on desktop viewports
           setIsFixed(isDesktop && window.scrollY > 0)
           ticking = false
         })
@@ -41,7 +40,6 @@ function Header({ title, subtitle, action }: HeaderProps) {
     const handleMediaChange = (e: MediaQueryListEvent | MediaQueryList) => {
       const matches = 'matches' in e ? e.matches : (e as MediaQueryList).matches
       setIsDesktop(matches)
-      // Re-evaluate fixed state when breakpoint changes
       setIsFixed(matches && window.scrollY > 0)
       updateHeight()
     }
@@ -50,7 +48,6 @@ function Header({ title, subtitle, action }: HeaderProps) {
 
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('resize', onResize)
-    // Listen to media query changes (better than resize for breakpoint intent)
     if (typeof mq.addEventListener === 'function') {
       mq.addEventListener('change', handleMediaChange as (e: MediaQueryListEvent) => void)
     } else if (typeof (mq as any).addListener === 'function') {
@@ -74,12 +71,13 @@ function Header({ title, subtitle, action }: HeaderProps) {
       <div
         id="myHeader"
         ref={headerRef}
-        className={`${isFixed ? 'fixed' : ''} bg-white border-b border-[#e2e8f0] 
-      px-4 sm:px-8 py-4 sm:py-6 flex flex-col sm:flex-row items-start sm:items-center justify-between 
-      gap-3`}
+        className={`${isFixed ? 'fixed w-[81.2%]' : ''} bg-white border-b border-[#e2e8f0] 
+        px-4 sm:px-8 py-4 sm:py-6 flex flex-col sm:flex-row items-start sm:items-center justify-between 
+        gap-3`}
       >
         <div className="space-y-1">
-          <h1 className="text-2xl md:text-3xl font-bold text-[#313F4E] tracking-tight break-words leading-tight heading-font">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight 
+          break-words leading-tight heading-font" style={{color:"#40B1DF"}}>
             {title}
           </h1>
           {subtitle && (

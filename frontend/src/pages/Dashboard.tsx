@@ -125,19 +125,16 @@ function Dashboard() {
     if (event) {
       const rect = event.currentTarget.getBoundingClientRect()
       const viewportPadding = 8
-      const estimatedPopupWidth = 160 // keep in sync with min-w-[160px]
-      const estimatedPopupHeight = 88 // approx height for two options
+      const estimatedPopupWidth = 160
+      const estimatedPopupHeight = 88
 
-      // Base position under the trigger
       let x = rect.left
       let y = rect.bottom + 5
 
-      // Clamp horizontally within viewport
       const maxX = window.innerWidth - estimatedPopupWidth - viewportPadding
       if (x > maxX) x = Math.max(viewportPadding, maxX)
       if (x < viewportPadding) x = viewportPadding
 
-      // If not enough space below, flip above the trigger
       const maxY = window.innerHeight - estimatedPopupHeight - viewportPadding
       if (y > maxY) {
         y = Math.max(viewportPadding, rect.top - estimatedPopupHeight - 5)

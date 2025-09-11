@@ -96,8 +96,6 @@ export const DecisionNode: React.FC<{ data: FlowNodeData }> = ({ data }) => (
   </div>
 );
 
-// Removed Feedback and Assessment nodes to align with Jira-like model
-
 export const CompletionNode: React.FC<{ data: FlowNodeData }> = ({ data }) => (
   <div className="bg-white text-[#313F4E] p-2 rounded-md shadow border border-[#e2e8f0] min-w-[140px]">
     <Handle type="target" position={Position.Left} className="w-2 h-2 bg-[#40B1DF]" />

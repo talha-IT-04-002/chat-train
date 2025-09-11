@@ -82,7 +82,6 @@ export function useGetCurrentUser() {
 }
 
 export function useGetTrainers() {
-  // Bind method to preserve ApiService `this` context
   return useApi((...args: unknown[]) => apiService.getTrainers(args[0] as string | undefined) as unknown as Promise<ApiResponse<any>>);
 }
 

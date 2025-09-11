@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Layout, Header, Card, Button, Badge } from "../components";
+import { Layout, Header, Card, Button, Badge, Dialog } from "../components";
 import { useAuth } from "../contexts/AuthContext";
 import { apiService } from "../services/api";
 
@@ -8,7 +8,6 @@ type ThemeOption = 'light' | 'dark' | 'system';
 export default function Settings() {
   const { user, isLoading, refreshUser } = useAuth();
 
-  // Profile state
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [jobTitle, setJobTitle] = useState("");
@@ -16,18 +15,15 @@ export default function Settings() {
   const [phone, setPhone] = useState("");
   const [timezone, setTimezone] = useState("UTC");
 
-  // Password state
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  // Preferences state
   const [selectedTheme, setSelectedTheme] = useState<ThemeOption>(() => (localStorage.getItem("theme") as ThemeOption) || "system");
   const [savedTheme, setSavedTheme] = useState<ThemeOption>(() => (localStorage.getItem("theme") as ThemeOption) || "system");
   const [notifications, setNotifications] = useState(true);
   const [language, setLanguage] = useState("en");
 
-  // UI state
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [savingProfile, setSavingProfile] = useState(false);
@@ -35,6 +31,57 @@ export default function Settings() {
   const [justSaved, setJustSaved] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [showErrorDialog, setShowErrorDialog] = useState(false);
+
+  const getFriendlyError = (msg?: string | null) => {
+    if (!msg) return 'Something went wrong. Please try again.';
+    const lower = msg.toLowerCase();
+
+    if (lower.includes('failed to fetch') || lower.includes('network') || lower.includes('net::')) {
+      return 'Cannot reach the server. Check your internet and try again.';
+    }
+
+    if (lower.includes('unauthorized') || lower.includes('authentication') || lower.includes('401')) {
+      return 'Your session has expired. Please sign in again.';
+    }
+    if (lower.includes('forbidden') || lower.includes('permission') || lower.includes('403')) {
+      return 'You do not have permission to perform this action.';
+    }
+
+    if (lower.includes('too many requests') || lower.includes('429')) {
+      return 'You’ve hit a rate limit. Please wait a moment and try again.';
+    }
+
+    if (lower.includes('not found') || lower.includes('404')) {
+      return 'The requested resource was not found.';
+    }
+
+    if (lower.includes('conflict') || lower.includes('duplicate') || lower.includes('already exists') || lower.includes('409')) {
+      return 'This conflicts with an existing record. Please review and try again.';
+    }
+
+    if (lower.includes('payload too large') || lower.includes('413') || lower.includes('file too large')) {
+      return 'That file is too large. Please upload a smaller file.';
+    }
+
+    if (lower.includes('validation') || lower.includes('invalid') || lower.includes('bad request') || lower.includes('400')) {
+      return 'Some details look invalid. Please review your input and try again.';
+    }
+
+    if (lower.includes('timeout') || lower.includes('504') || lower.includes('gateway')) {
+      return 'The request took too long. Please try again shortly.';
+    }
+
+    if (lower.includes('server') || lower.includes('500')) {
+      return 'The server had an issue. Please try again later.';
+    }
+
+    return msg.length > 200 ? `${msg.substring(0, 200)}…` : msg;
+  };
+
+  useEffect(() => {
+    if (error) setShowErrorDialog(true);
+  }, [error]);
 
   useEffect(() => {
     if (!user) return;
@@ -97,7 +144,6 @@ export default function Settings() {
     clearBanners();
     setUploadingAvatar(true);
     try {
-      // Basic validation
       const allowed = ['image/jpeg','image/png','image/gif'];
       if (!allowed.includes(file.type)) {
         throw new Error('Please upload a JPG, PNG, or GIF image');
@@ -139,8 +185,10 @@ export default function Settings() {
     try { localStorage.setItem("theme", selectedTheme); } catch {}
     setSavedTheme(selectedTheme);
     window.dispatchEvent(new Event('themechange'));
-    // Persist theme preference to backend as well
-    apiService.updatePreferences({ theme: selectedTheme }).catch(() => {});
+    apiService.updatePreferences({ theme: selectedTheme }).catch((e: any) => {
+      const msg = e instanceof Error ? e.message : 'Failed to save theme preference';
+      setError(msg);
+    });
     setJustSaved(true);
     const t = setTimeout(() => setJustSaved(false), 1200);
     return () => clearTimeout(t);
@@ -150,6 +198,7 @@ export default function Settings() {
   const avatarUrl = user?.avatar ? apiService.buildPublicUrl(user.avatar) : '';
 
   return (
+    <>
     <Layout>
       <Header 
         title="Settings" 
@@ -157,9 +206,9 @@ export default function Settings() {
       />
       <div className="px-4 sm:px-8 py-6 sm:py-8">
         <div className="max-w-5xl mx-auto space-y-8">
-          {(message || error) && (
+          {message && (
             <div className={`rounded-xl border px-4 py-3 ${message ? 'border-green-200 bg-green-50 text-green-700' : 'border-red-200 bg-red-50 text-red-700'}`}>
-              {message || error}
+              {message}
             </div>
           )}
 
@@ -321,5 +370,16 @@ export default function Settings() {
         </div>
       </div>
     </Layout>
+    <Dialog
+      isOpen={showErrorDialog}
+      onClose={() => { setShowErrorDialog(false); setError(null); }}
+      onConfirm={() => { setShowErrorDialog(false); setError(null); }}
+      title="Oops, something went wrong"
+      message={getFriendlyError(error)}
+      confirmText="OK"
+      cancelText="Close"
+      variant="danger"
+    />
+    </>
   );
 }

@@ -73,12 +73,6 @@ function UserProfile({ sidebarCollapsed = false }: UserProfileProps) {
 
         {showDropdown && !sidebarCollapsed && (
           <div className="absolute bottom-full left-0 right-0 mb-2 bg-white rounded-xl shadow-lg border border-light py-2 z-50">
-            <div className="px-4 py-2 border-b border-light">
-              <p className="text-xs font-medium text-secondary uppercase tracking-wider">
-                Account
-              </p>
-            </div>
-            
             <div className="py-1">
               <button
                 onClick={handleLogout}

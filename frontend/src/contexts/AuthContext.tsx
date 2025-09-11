@@ -159,9 +159,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       if (response.success && response.data) {
         const { user } = response.data;
-        // Store last attempted email for verification page prefill
         try { localStorage.setItem('lastLoginEmail', email); } catch {}
-        // Skip email verification check when bypass flag is enabled
         if (!bypassEmailVerification && !user.emailVerified) {
           dispatch({ type: 'AUTH_FAILURE', payload: 'Please verify your email to continue.' });
           return { success: false, reason: 'EMAIL_NOT_VERIFIED', message: 'Please verify your email to continue.' };
@@ -224,11 +222,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = () => {
     apiService.clearToken();
     dispatch({ type: 'LOGOUT' });
-    // Reset theme preference to system on logout
     try {
       localStorage.setItem('theme', 'system');
     } catch {}
-    // Notify the app to reconfigure theme listeners and apply system preference
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new Event('themechange'))
     }

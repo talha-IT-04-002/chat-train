@@ -77,7 +77,6 @@ router.post('/register', [
     await TeamMember.create({
       organizationId: organization._id,
       userId: user._id,
-      role: 'owner',
       status: 'active',
       joinedAt: new Date()
     });
@@ -103,7 +102,6 @@ router.post('/register', [
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
-        role: user.role,
         status: user.status,
         emailVerified: user.emailVerified
       },
@@ -168,7 +166,6 @@ router.post('/login', [
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
-        role: user.role,
         status: user.status,
         emailVerified: user.emailVerified,
         preferences: user.preferences
@@ -177,9 +174,7 @@ router.post('/login', [
         id: tm.organizationId._id,
         name: tm.organizationId.name,
         logo: tm.organizationId.logo,
-        domain: tm.organizationId.domain,
-        role: tm.role,
-        permissions: tm.permissions
+        domain: tm.organizationId.domain
       })),
       token
     }
@@ -200,7 +195,6 @@ router.get('/me', protect, asyncHandler(async (req, res) => {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
-        role: user.role,
         status: user.status,
         emailVerified: user.emailVerified,
         preferences: user.preferences,
@@ -211,8 +205,6 @@ router.get('/me', protect, asyncHandler(async (req, res) => {
         name: tm.organizationId.name,
         logo: tm.organizationId.logo,
         domain: tm.organizationId.domain,
-        role: tm.role,
-        permissions: tm.permissions,
         subscription: tm.organizationId.subscription
       }))
     }

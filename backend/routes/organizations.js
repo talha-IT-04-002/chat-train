@@ -69,8 +69,6 @@ router.get('/', asyncHandler(async (req, res) => {
     description: tm.organizationId.description,
     logo: tm.organizationId.logo,
     domain: tm.organizationId.domain,
-    role: tm.role,
-    permissions: tm.permissions,
     subscription: tm.organizationId.subscription
   }));
 
@@ -97,9 +95,7 @@ router.get('/:id', asyncHandler(async (req, res) => {
   res.json({
     success: true,
     data: {
-      organization: teamMembership.organizationId,
-      role: teamMembership.role,
-      permissions: teamMembership.permissions
+      organization: teamMembership.organizationId
     }
   });
 }));
@@ -119,8 +115,7 @@ router.get('/:id/team', asyncHandler(async (req, res) => {
 router.post(
   '/:id/team/invite',
   [
-    body('email').isEmail().withMessage('Valid email is required').normalizeEmail(),
-    body('role').optional().isIn(['owner', 'admin', 'manager', 'trainer', 'viewer']).withMessage('Invalid role')
+    body('email').isEmail().withMessage('Valid email is required').normalizeEmail()
   ],
   asyncHandler(async (req, res) => {
     const errors = validationResult(req);
@@ -129,10 +124,10 @@ router.post(
     }
 
     const organizationId = req.params.id;
-    const { email, role = 'viewer' } = req.body;
+    const { email } = req.body;
 
     const inviterMembership = await TeamMember.findOne({ userId: req.user.id, organizationId });
-    if (!inviterMembership || !inviterMembership.canManageMembers()) {
+    if (!inviterMembership) {
       return res.status(403).json({ success: false, message: 'Not authorized to invite members' });
     }
 
@@ -151,9 +146,8 @@ router.post(
 
     let member = await TeamMember.findOne({ userId: user._id, organizationId });
     if (!member) {
-      member = new TeamMember({ organizationId, userId: user._id, role, status: 'invited', invitedBy: req.user.id, invitedAt: new Date() });
+      member = new TeamMember({ organizationId, userId: user._id, status: 'invited', invitedBy: req.user.id, invitedAt: new Date() });
     } else {
-      member.role = role;
       member.status = 'invited';
       member.invitedBy = req.user.id;
       member.invitedAt = new Date();
@@ -168,8 +162,7 @@ router.post(
       toEmail: email,
       inviteUrl,
       organizationName: (await Organization.findById(organizationId)).name,
-      inviterName: `${req.user.firstName} ${req.user.lastName}`,
-      role
+      inviterName: `${req.user.firstName} ${req.user.lastName}`
     });
 
     if (!emailResult.success) {
@@ -198,36 +191,5 @@ router.post(
 );
 
 
-router.patch(
-  '/:id/team/:memberId/role',
-  [
-    param('memberId').isMongoId(),
-    body('role').isIn(['owner', 'admin', 'manager', 'trainer', 'viewer']).withMessage('Invalid role')
-  ],
-  asyncHandler(async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ success: false, errors: errors.array() });
-    }
-
-    const organizationId = req.params.id;
-    const { role } = req.body;
-
-    const actor = await TeamMember.findOne({ userId: req.user.id, organizationId });
-    if (!actor || !actor.canManageMembers()) {
-      return res.status(403).json({ success: false, message: 'Not authorized to update roles' });
-    }
-
-    const member = await TeamMember.findOne({ _id: req.params.memberId, organizationId });
-    if (!member) {
-      return res.status(404).json({ success: false, message: 'Member not found' });
-    }
-
-    member.role = role;
-    await member.save();
-
-    res.json({ success: true, message: 'Role updated', data: member });
-  })
-);
 
 module.exports = router;

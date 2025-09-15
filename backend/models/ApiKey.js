@@ -250,4 +250,14 @@ ApiKeySchema.statics.getUsageStats = function(organizationId, startDate, endDate
   ]);
 };
 
+// Virtual field for displaying truncated key
+ApiKeySchema.virtual('displayKey').get(function() {
+  if (!this.key) return '';
+  
+  if (this.key.length <= 14) return this.key;
+  const start = this.key.slice(0, 6);
+  const end = this.key.slice(-4);
+  return `${start}…${end}`;
+});
+
 module.exports = mongoose.model('ApiKey', ApiKeySchema);

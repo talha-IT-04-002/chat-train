@@ -20,7 +20,6 @@ export interface User {
   firstName: string;
   lastName: string;
   avatar?: string;
-  role: string;
   status: string;
   emailVerified: boolean;
   preferences?: { theme?: 'light' | 'dark' | 'system'; notifications?: boolean; language?: string };
@@ -32,8 +31,6 @@ export interface Organization {
   name: string;
   logo?: string;
   domain?: string;
-  role: string;
-  permissions: string[];
   subscription?: any;
 }
 
@@ -491,7 +488,6 @@ class ApiService {
 
   public async inviteTeamMember(organizationId: string, inviteData: {
     email: string;
-    role: 'owner' | 'admin' | 'manager' | 'trainer' | 'viewer';
   }): Promise<ApiResponse<any>> {
     return this.request<any>(`/organizations/${organizationId}/team/invite`, {
       method: 'POST',
@@ -511,12 +507,6 @@ class ApiService {
     });
   }
 
-  public async updateTeamMemberRole(organizationId: string, memberId: string, role: string): Promise<ApiResponse<any>> {
-    return this.request<any>(`/organizations/${organizationId}/team/${memberId}/role`, {
-      method: 'PATCH',
-      body: JSON.stringify({ role }),
-    });
-  }
 
   public async healthCheck(): Promise<ApiResponse> {
     return this.request('/health');

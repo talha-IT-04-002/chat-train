@@ -1,5 +1,5 @@
 const express = require('express');
-const { protect, authorize } = require('../middleware/auth');
+const { protect } = require('../middleware/auth');
 const asyncHandler = require('express-async-handler');
 const { single: uploadSingle, handleUploadError } = require('../middleware/upload');
 const bcrypt = require('bcryptjs');
@@ -10,7 +10,7 @@ const router = express.Router();
 
 router.use(protect);
 
-router.get('/', authorize('admin'), asyncHandler(async (req, res) => {
+router.get('/', asyncHandler(async (req, res) => {
   const users = await User.find().select('-password');
 
   res.json({
@@ -30,7 +30,7 @@ router.get('/:id', asyncHandler(async (req, res) => {
     });
   }
 
-  if (req.user.id !== req.params.id && req.user.role !== 'admin') {
+  if (req.user.id !== req.params.id) {
     return res.status(403).json({
       success: false,
       message: 'Not authorized to access this user'

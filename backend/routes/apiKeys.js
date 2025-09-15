@@ -39,7 +39,7 @@ router.get('/', asyncHandler(async (req, res) => {
     health: k.health,
     createdAt: k.createdAt,
     updatedAt: k.updatedAt,
-    key: k.key
+    key: k.displayKey // Use the virtual field for truncated display
   }));
 
   res.json({
@@ -82,7 +82,7 @@ router.post('/', asyncHandler(async (req, res) => {
       permissions: created.permissions,
       isActive: created.isActive,
       isVisible: created.isVisible,
-      key: created.key,
+      key: created.displayKey, // Use the virtual field for truncated display
       createdAt: created.createdAt,
       updatedAt: created.updatedAt
     }
@@ -125,7 +125,7 @@ router.put('/:id', asyncHandler(async (req, res) => {
       permissions: existing.permissions,
       isActive: existing.isActive,
       isVisible: existing.isVisible,
-      key: existing.key,
+      key: existing.displayKey, // Use the virtual field for truncated display
       createdAt: existing.createdAt,
       updatedAt: existing.updatedAt
     }
@@ -143,5 +143,6 @@ router.delete('/:id', asyncHandler(async (req, res) => {
 
   res.json({ success: true, message: 'API key deleted successfully' });
 }));
+
 
 module.exports = router;

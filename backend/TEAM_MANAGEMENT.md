@@ -1,16 +1,14 @@
-# Team Management (Stable Core)
+# Team Management
 
-This document covers inviting team members, assigning/updating roles, and how organization-member relationships are stored.
+This document covers inviting team members and how organization-member relationships are stored.
 
 ## Overview
 - Invite team members via email with a time-limited token.
 - Accept invites to activate membership and (optionally) set name/password.
-- Assign and update roles per organization.
 - Store membership in `TeamMember` linking `User` to `Organization`.
 
 ## Data Model
-- `TeamMember` fields: `organizationId`, `userId`, `role` (owner|admin|manager|trainer|viewer), `permissions[]`, `status` (active|invited|suspended|pending), `invitedBy`, `invitedAt`, `joinedAt`, `inviteToken`, `inviteExpires`.
-- Role changes auto-set sensible `permissions` in a pre-save hook.
+- `TeamMember` fields: `organizationId`, `userId`, `status` (active|invited|suspended|pending), `invitedBy`, `invitedAt`, `joinedAt`, `inviteToken`, `inviteExpires`.
 
 ## Email Invites
 - Uses `emailService.sendTeamInviteEmail(...)`.
@@ -27,20 +25,20 @@ Base path: `/api/organizations/:id`
 1) List team members
 - Method/Route: `GET /team`
 - Auth: Any member of the organization
-- Response: `[{ _id, organizationId, userId: { email, firstName, lastName, avatar, status }, role, permissions, status, ... }]`
+- Response: `[{ _id, organizationId, userId: { email, firstName, lastName, avatar, status }, status, ... }]`
 
 2) Invite a member
 - Method/Route: `POST /team/invite`
-- Auth: owner|admin|manager
+- Auth: Any organization member
 - Body:
 ```json
-{ "email": "invitee@example.com", "role": "viewer" }
+{ "email": "invitee@example.com" }
 ```
 - Response: `{ success: true, message: "Invitation sent", data: { memberId } }`
 
 Behavior:
 - Creates a pending `User` if not found.
-- Upserts `TeamMember` with status `invited`, role provided (default `viewer`).
+- Upserts `TeamMember` with status `invited`.
 - Sends invite email with accept URL.
 
 3) Accept invitation
@@ -57,18 +55,9 @@ Behavior:
 - Activates the related `User` (`status=active`, `emailVerified=true`, updates optional fields, hashes password automatically via user pre-save hook).
 - Activates `TeamMember` (`status=active`, clears `inviteToken`/`inviteExpires`, sets `joinedAt`).
 
-4) Update member role
-- Method/Route: `PATCH /team/:memberId/role`
-- Auth: owner|admin|manager
-- Body:
-```json
-{ "role": "manager" }
-```
-- Response: `{ success: true, message: "Role updated", data: <TeamMember> }`
-
 ## Authorization Notes
 - Only members of the org can list the team.
-- Only roles with `canManageMembers()` (owner, admin, manager) can invite or update roles.
+- Any organization member can invite new members.
 - Membership uniqueness is enforced by compound index `(userId, organizationId)`.
 
 ## Status Values
@@ -89,7 +78,7 @@ Behavior:
 curl -X POST \
   -H "Authorization: Bearer <JWT>" \
   -H "Content-Type: application/json" \
-  -d '{"email":"invitee@example.com","role":"viewer"}' \
+  -d '{"email":"invitee@example.com"}' \
   http://localhost:5000/api/organizations/<orgId>/team/invite
 ```
 - Accept:
@@ -98,12 +87,4 @@ curl -X POST \
   -H "Content-Type: application/json" \
   -d '{"token":"<rawToken>","firstName":"John","lastName":"Doe","password":"secret123"}' \
   http://localhost:5000/api/organizations/<orgId>/team/accept
-```
-- Update role:
-```bash
-curl -X PATCH \
-  -H "Authorization: Bearer <JWT>" \
-  -H "Content-Type: application/json" \
-  -d '{"role":"manager"}' \
-  http://localhost:5000/api/organizations/<orgId>/team/<memberId>/role
 ```

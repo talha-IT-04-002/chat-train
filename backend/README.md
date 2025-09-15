@@ -93,9 +93,9 @@ A comprehensive MERN stack backend for ChatTrain: Propelling Training Forward - 
   
 #### Team Management (Stable Core)
 - `GET /api/organizations/:id/team` - List team members
-- `POST /api/organizations/:id/team/invite` - Invite by email (owner/admin/manager)
+- `POST /api/organizations/:id/team/invite` - Invite by email (super_admin/org_admin/manager)
 - `POST /api/organizations/:id/team/accept` - Accept invite (public via token)
-- `PATCH /api/organizations/:id/team/:memberId/role` - Update role (owner/admin/manager)
+- `PATCH /api/organizations/:id/team/:memberId/role` - Update role (super_admin/org_admin/manager)
 
 ### Trainers
 - `GET /api/trainers` - Get all trainers for organization
@@ -124,9 +124,9 @@ A comprehensive MERN stack backend for ChatTrain: Propelling Training Forward - 
 
 ### Team Management
 - `GET /api/organizations/:id/team` - List team members
-- `POST /api/organizations/:id/team/invite` - Invite a member (owner/admin/manager)
+- `POST /api/organizations/:id/team/invite` - Invite a member (super_admin/org_admin/manager)
 - `POST /api/organizations/:id/team/accept` - Accept invitation (public)
-- `PATCH /api/organizations/:id/team/:memberId/role` - Update role (owner/admin/manager)
+- `PATCH /api/organizations/:id/team/:memberId/role` - Update role (super_admin/org_admin/manager)
 
 For full details, see `backend/TEAM_MANAGEMENT.md`.
 

@@ -89,10 +89,10 @@ class EmailService {
     }
   }
 
-  async sendTeamInviteEmail({ toEmail, inviteUrl, organizationName, inviterName, role }) {
+  async sendTeamInviteEmail({ toEmail, inviteUrl, organizationName, inviterName }) {
     const subject = `You're invited to join ${organizationName} on Chat Train`;
 
-    const html = this.getTeamInviteEmailTemplate({ inviteUrl, organizationName, inviterName, role, recipientEmail: toEmail });
+    const html = this.getTeamInviteEmailTemplate({ inviteUrl, organizationName, inviterName, recipientEmail: toEmail });
 
     const mailOptions = {
       from: `"Chat Train" <${process.env.EMAIL_USER}>`,
@@ -159,7 +159,7 @@ class EmailService {
     `;
   }
 
-  getTeamInviteEmailTemplate({ inviteUrl, organizationName, inviterName, role, recipientEmail }) {
+  getTeamInviteEmailTemplate({ inviteUrl, organizationName, inviterName, recipientEmail }) {
     return `
       <!DOCTYPE html>
       <html>
@@ -183,7 +183,7 @@ class EmailService {
             <p>${organizationName} on Chat Train</p>
           </div>
           <div class="content">
-            <p>${inviterName} invited you to join <strong>${organizationName}</strong> as <strong>${role}</strong>.</p>
+            <p>${inviterName} invited you to join <strong>${organizationName}</strong> on Chat Train.</p>
             <div style="text-align: center;">
               <a href="${inviteUrl}" class="button">Accept Invitation</a>
             </div>
